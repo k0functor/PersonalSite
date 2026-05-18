@@ -1,8 +1,16 @@
 ---
+import "../styles/global.css";
+import "katex/dist/katex.min.css";
+
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Container from "../components/Container.astro";
+import type { Lang } from "../config/navigation";
+
 interface Props {
   title: string;
   description?: string;
-  lang: "ru" | "en";
+  lang: Lang;
 }
 
 const {
@@ -10,38 +18,6 @@ const {
   description = "Personal website about math, programming, and game development.",
   lang,
 } = Astro.props;
-
-const isRu = lang === "ru";
-
-const nav = isRu
-  ? {
-      home: "Главная",
-      about: "Обо мне",
-      math: "Математика",
-      programming: "Программирование",
-      game: "Игра",
-      blog: "Блог",
-      projects: "Проекты",
-      shop: "Мерч",
-      switchLang: "EN",
-      switchHref: "/en/",
-      prefix: "/ru",
-      tagline: "Математика · Код · Игры",
-    }
-  : {
-      home: "Home",
-      about: "About",
-      math: "Math",
-      programming: "Programming",
-      game: "Game",
-      blog: "Blog",
-      projects: "Projects",
-      shop: "Merch",
-      switchLang: "RU",
-      switchHref: "/ru/",
-      prefix: "/en",
-      tagline: "Math · Code · Games",
-    };
 ---
 
 <html lang={lang}>
@@ -50,32 +26,18 @@ const nav = isRu
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
 
   <body>
-    <header>
-      <a href={`${nav.prefix}/`}>&lt;(.____.)&gt;</a>
-
-      <nav>
-        <a href={`${nav.prefix}/`}>{nav.home}</a>
-        <a href={`${nav.prefix}/about/`}>{nav.about}</a>
-        <a href={`${nav.prefix}/math/`}>{nav.math}</a>
-        <a href={`${nav.prefix}/programming/`}>{nav.programming}</a>
-        <a href={`${nav.prefix}/game/`}>{nav.game}</a>
-        <a href={`${nav.prefix}/blog/`}>{nav.blog}</a>
-        <a href={`${nav.prefix}/projects/`}>{nav.projects}</a>
-        <a href={`${nav.prefix}/shop/`}>{nav.shop}</a>
-        <a href={nav.switchHref}>{nav.switchLang}</a>
-      </nav>
-    </header>
+    <Header lang={lang} />
 
     <main>
-      <slot />
+      <Container>
+        <slot />
+      </Container>
     </main>
 
-    <footer>
-      <p>&lt;(.____.)&gt; — {nav.tagline}</p>
-      <p>© 2026</p>
-    </footer>
+    <Footer lang={lang} />
   </body>
 </html>

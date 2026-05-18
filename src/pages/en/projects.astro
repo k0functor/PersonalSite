@@ -1,0 +1,69 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`Projects — ${logo}`}
+  description="Active and planned projects: website, game, notes, media, and learning experiments."
+  lang="en"
+>
+  <PageHeader
+    title="Projects"
+    description="Active and planned projects. Some already exist, some are prototypes, and some are pretending to wait patiently."
+  />
+
+  <section class="grid">
+    <ProjectCard
+      title="Personal Website"
+      description="A bilingual website about mathematics, programming, game development, and long-term learning."
+      status="active"
+      href="/en/"
+    />
+
+    <ProjectCard
+      title="C++ RPG Prototype"
+      description="A game prototype inspired by Slay the Spire and Darkest Dungeon. Main focuses: combat, characters, cards, artifacts, and balance."
+      status="active"
+      href="/en/game/"
+    />
+
+    <ProjectCard
+      title="Math Notes"
+      description="A system of mathematical notes, problems, study materials, and topic maps."
+      status="planned"
+      href="/en/math/"
+    />
+
+    <ProjectCard
+      title="Programming Notes"
+      description="Notes about C++, STL, algorithms, Computer Science, and engineering practice."
+      status="planned"
+      href="/en/programming/"
+    />
+
+    <ProjectCard
+      title="Media"
+      description="Future YouTube, devlog, and Telegram materials for finding like-minded people and building a small income stream."
+      status="planned"
+    />
+
+    <ProjectCard
+      title="Merch"
+      description="A future shop section with stickers, T-shirts, mugs, posters, and digital materials."
+      status="planned"
+      href="/en/shop/"
+    />
+  </section>
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

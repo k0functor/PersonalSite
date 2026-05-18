@@ -1,0 +1,96 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import SectionCard from "../../components/SectionCard.astro";
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`Игра — ${logo}`}
+  description="Devlog разработки игры на стыке Slay the Spire и Darkest Dungeon."
+  lang="ru"
+>
+  <PageHeader
+    title="Игра"
+    description="Механики, персонажи, карты, артефакты, баланс, прототипы и devlog разработки."
+  />
+
+  <section class="intro">
+    <p>
+      Я разрабатываю игру, вдохновлённую Slay the Spire и Darkest Dungeon.
+      Меня интересует сочетание карточной тактики, партийной структуры,
+      риск-менеджмента, долгосрочных последствий и выразительных персонажей.
+    </p>
+
+    <p>
+      Пока проект находится на ранней стадии. Здесь будут появляться заметки о
+      дизайне, технических решениях, балансе, прототипах и ошибках, без которых,
+      к сожалению, разработка игр почему-то не работает.
+    </p>
+  </section>
+
+  <section class="grid">
+    <SectionCard
+      title="Концепция"
+      description="Жанр, настроение, ключевая петля, источники вдохновения и отличие от похожих проектов."
+      href="/ru/game/concept/"
+    />
+
+    <SectionCard
+      title="Боевая система"
+      description="Правила боя, карты, действия персонажей, враги, состояния, ресурсы и темп сражений."
+      href="/ru/game/combat/"
+    />
+
+    <SectionCard
+      title="Персонажи"
+      description="Классы, роли, стартовые колоды, синергии, сильные и слабые стороны, пары персонажей."
+      href="/ru/game/characters/"
+    />
+
+    <SectionCard
+      title="Карты"
+      description="Атаки, навыки, реакции, особые эффекты, редкости, улучшения и взаимодействия."
+      href="/ru/game/cards/"
+    />
+
+    <SectionCard
+      title="Артефакты"
+      description="Пассивные эффекты, модификаторы стратегии, редкие находки и способы менять стиль прохождения."
+      href="/ru/game/artifacts/"
+    />
+
+    <SectionCard
+      title="Баланс"
+      description="Числа, таблицы, эвристики, тестирование и попытки не создать сломанную машину боли."
+      href="/ru/game/balance/"
+    />
+  </section>
+
+  <section>
+    <h2>Планируемые материалы</h2>
+
+    <ul>
+      <li>Идея моей игры</li>
+      <li>Что я беру от Slay the Spire</li>
+      <li>Что я беру от Darkest Dungeon</li>
+      <li>Первая версия боевой системы</li>
+      <li>Как я проектирую персонажей</li>
+      <li>Баланс стартовых пар персонажей</li>
+      <li>Почему прототип сначала будет простым</li>
+    </ul>
+  </section>
+
+  <style>
+    .intro {
+      margin-bottom: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import BookCard from "../../../components/BookCard.astro";
+import { enMathBooks } from "../../../data/mathBooks";
+
+const logo = "<(.____.)>";
+
+const reading = enMathBooks.filter((book) => book.status === "reading");
+const planned = enMathBooks.filter((book) => book.status === "planned");
+const read = enMathBooks.filter((book) => book.status === "read");
+---
+
+<BaseLayout
+  title={`Math Books — ${logo}`}
+  description="Math books I have read, am reading, or plan to read."
+  lang="en"
+>
+  <PageHeader
+    title="Math Books"
+    description="Books I have read, am reading, or plan to read."
+  />
+
+  <section>
+    <h2>Reading</h2>
+    <div class="grid">
+      {reading.map((book) => <BookCard book={book} lang="en" />)}
+    </div>
+  </section>
+
+  <section>
+    <h2>Planned</h2>
+    <div class="grid">
+      {planned.map((book) => <BookCard book={book} lang="en" />)}
+    </div>
+  </section>
+
+  <section>
+    <h2>Read</h2>
+    {read.length > 0 ? (
+      <div class="grid">
+        {read.map((book) => <BookCard book={book} lang="en" />)}
+      </div>
+    ) : (
+      <p>The list is empty for now. Tragic, but fixable.</p>
+    )}
+  </section>
+
+  <style>
+    section + section {
+      margin-top: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+
+const notes = await getCollection("programming", ({ data }) => data.lang === "ru");
+const sortedNotes = notes.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout
+  title="Заметки по программированию — <(.____.)>"
+  description="C++, STL, алгоритмы, Computer Science и инструменты."
+  lang="ru"
+>
+  <PageHeader
+    title="Заметки по программированию"
+    description="C++, STL, алгоритмы, Computer Science и инструменты."
+  />
+
+  <section class="grid">
+    {sortedNotes.map((entry) => {
+      const slug = entry.data.slug ?? entry.id;
+      return (
+        <a class="card" href={`/ru/programming/notes/${slug}/`}>
+          <p>{entry.data.topic} / {entry.data.level}</p>
+          <h2>{entry.data.title}</h2>
+          <p>{entry.data.description}</p>
+        </a>
+      );
+    })}
+  </section>
+
+  <style>
+    .grid {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .card {
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
+      text-decoration: none;
+    }
+
+    .card p:first-child {
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+    }
+  </style>
+</BaseLayout>

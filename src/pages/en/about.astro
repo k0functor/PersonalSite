@@ -1,0 +1,78 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Timeline from "../../components/Timeline.astro";
+import { enTimeline } from "../../data/timeline";
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`About — ${logo}`}
+  description="A short introduction and timeline."
+  lang="en"
+>
+  <PageHeader
+    title="About"
+    description="A short introduction: who I am, what I do, and where I am going."
+  />
+
+  <section class="about">
+    <div class="photo">
+      <img src="/images/profile.jpg" alt="Profile photo" />
+    </div>
+
+    <div>
+      <p>
+        I study mathematics, programming, and game development. My current focus
+        is C++, Computer Science, mathematical education, and my own game
+        project.
+      </p>
+
+      <p>
+        This website is a place where I collect notes, my learning path,
+        projects, and development logs.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Timeline</h2>
+    <Timeline items={enTimeline} />
+  </section>
+
+  <style>
+    .about {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+      margin-bottom: var(--space-xl);
+    }
+
+    .photo {
+      aspect-ratio: 1;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      background: var(--color-card);
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (max-width: 700px) {
+      .about {
+        grid-template-columns: 1fr;
+      }
+
+      .photo {
+        max-width: 220px;
+      }
+    }
+  </style>
+</BaseLayout>

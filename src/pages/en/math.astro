@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import SectionCard from "../../components/SectionCard.astro";
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`Math — ${logo}`}
+  description="Notes, problem solving, study plans, and my mathematical learning path."
+  lang="en"
+>
+  <PageHeader
+    title="Math"
+    description="Books, notes, problem sheets, LaTeX solutions, and areas I want to understand more deeply."
+  />
+
+  <section class="intro">
+    <p>
+      Mathematics is not just a useful tool for programming for me. It is a
+      separate long-term goal. I want to build a strong foundation, learn to
+      solve problems, understand structures, and gradually move toward
+      research-level work.
+    </p>
+
+    <p>
+      This section will contain books, notes, solved problems, topic maps,
+      reading lists, and reflections on how I study different areas of
+      mathematics.
+    </p>
+  </section>
+
+  <section class="grid">
+    <SectionCard
+      title="Books"
+      description="Books I have read, am reading, or plan to read."
+      href="/en/math/books/"
+    />
+
+    <SectionCard
+      title="IUM"
+      description="Problem sheets, LaTeX solutions, and submission statuses."
+      href="/en/math/ium/"
+    />
+
+    <SectionCard
+      title="Notes"
+      description="Mathematical notes, definitions, examples, and proofs."
+      href="/en/math/notes/"
+    />
+
+    <SectionCard
+      title="Problems"
+      description="Problem solutions, solution ideas, mistakes, useful techniques, and observations."
+      href="/en/math/problems/"
+    />
+
+    <SectionCard
+      title="Topic Maps"
+      description="Learning plans: what to read, in what order, what problems to solve, and which connections matter."
+      href="/en/math/roadmaps/"
+    />
+
+    <SectionCard
+      title="Complex Analysis and Geometry"
+      description="Complex analysis, Riemann surfaces, geometric ideas, and related subjects."
+      href="/en/math/complex-analysis/"
+    />
+  </section>
+
+  <section>
+    <h2>Planned materials</h2>
+
+    <ul>
+      <li>My mathematical roadmap for 2026</li>
+      <li>How I want to work with IUM problem sheets</li>
+      <li>What to know before algebraic topology</li>
+      <li>How to write mathematical notes</li>
+      <li>Problems I failed to solve on the first attempt</li>
+    </ul>
+  </section>
+
+  <style>
+    .intro {
+      margin-bottom: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

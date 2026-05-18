@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`Merch — ${logo}`}
+  description="A future shop section for the website."
+  lang="en"
+>
+  <PageHeader
+    title="Merch"
+    description="A future shop section for the website. No cart, checkout, or commercial machinery yet."
+  />
+
+  <section>
+    <p>
+      Merch is coming later. In the first version of the website, this page
+      exists as a foundation for a future shop section, not as a full store.
+    </p>
+
+    <p>
+      Right now, the priority is to build content, projects, and an audience.
+      Selling mugs to an empty hallway would be poetic, but not especially useful.
+    </p>
+  </section>
+
+  <section>
+    <h2>Planned categories</h2>
+
+    <ul>
+      <li>stickers;</li>
+      <li>T-shirts;</li>
+      <li>mugs;</li>
+      <li>posters;</li>
+      <li>digital materials.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Principle</h2>
+
+    <p>
+      First, the website should become a living place with materials, projects,
+      and a recognizable style. The shop comes later.
+    </p>
+  </section>
+</BaseLayout>

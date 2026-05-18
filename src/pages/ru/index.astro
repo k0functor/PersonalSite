@@ -1,28 +1,80 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import SectionCard from "../../components/SectionCard.astro";
+
+const logo = "<(.____.)>";
 ---
 
 <BaseLayout
-  title="<(.____.)> — Главная"
-  description="Личный сайт о математике, программировании и разработке игры."
+  title={`${logo} — математика, код и игры`}
+  description="Личный сайт о математике, программировании, разработке игры и долгосрочном обучении."
   lang="ru"
 >
-  <h1>&lt;(.____.)&gt;</h1>
+  <PageHeader
+    title={logo}
+    description="Личный сайт о математике, программировании, разработке игры и долгосрочном обучении."
+  />
 
-  <p>
-    Личный сайт о математике, программировании, разработке игры
-    и долгосрочном обучении.
-  </p>
+  <section class="intro">
+    <p>
+      Я собираю здесь заметки, проекты, devlog, учебные материалы и мысли о том,
+      как постепенно строить сильный технический и математический бэкграунд.
+    </p>
 
-  <section>
-    <h2>Основные разделы</h2>
-    <ul>
-      <li>Математика</li>
-      <li>Программирование</li>
-      <li>Разработка игры</li>
-      <li>Блог</li>
-      <li>Проекты</li>
-      <li>Будущий мерч</li>
-    </ul>
+    <p>
+      Главные темы сайта — математика, C++ и Computer Science, разработка
+      собственной игры, личные проекты и публичный учебный путь.
+    </p>
   </section>
+
+  <section class="grid">
+    <SectionCard
+      title="Математика"
+      description="Конспекты, задачи, НМУ, МФТИ, алгебраическая топология, комплексный анализ и всё, что помогает думать точнее."
+      href="/ru/math/"
+    />
+
+    <SectionCard
+      title="Программирование"
+      description="C++, STL, алгоритмы, структуры данных, Computer Science, инструменты разработки и инженерная практика."
+      href="/ru/programming/"
+    />
+
+    <SectionCard
+      title="Игра"
+      description="Devlog разработки игры на стыке Slay the Spire и Darkest Dungeon: механики, персонажи, карты, артефакты и баланс."
+      href="/ru/game/"
+    />
+
+    <SectionCard
+      title="Блог"
+      description="Заметки об обучении, разработке, книгах, инструментах, планировании и долгосрочных целях."
+      href="/ru/blog/"
+    />
+
+    <SectionCard
+      title="Проекты"
+      description="Личный сайт, игра, учебные проекты, эксперименты и всё, что постепенно превращается из идеи в работающую систему."
+      href="/ru/projects/"
+    />
+
+    <SectionCard
+      title="Мерч"
+      description="Будущая секция сайта. Пока без магазина, корзины и прочей коммерческой магии."
+      href="/ru/shop/"
+    />
+  </section>
+
+  <style>
+    .intro {
+      margin-bottom: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
 </BaseLayout>

@@ -1,0 +1,126 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"math-ium">;
+}
+
+const { entry } = Astro.props;
+const {
+  title,
+  description,
+  lang,
+  course,
+  sheetNumber,
+  status,
+  solved,
+  total,
+  date,
+} = entry.data;
+
+const statusLabels = {
+  ru: {
+    "not-started": "не начат",
+    "in-progress": "в процессе",
+    "partly-solved": "решён частично",
+    solved: "решён",
+    submitted: "сдан",
+    "needs-rewrite": "нужно переписать",
+  },
+  en: {
+    "not-started": "not started",
+    "in-progress": "in progress",
+    "partly-solved": "partly solved",
+    solved: "solved",
+    submitted: "submitted",
+    "needs-rewrite": "needs rewrite",
+  },
+};
+
+const labels = {
+  ru: {
+    sheet: "листок",
+    status: "Статус",
+    solved: "Решено",
+    date: "Дата",
+    locale: "ru-RU",
+  },
+  en: {
+    sheet: "sheet",
+    status: "Status",
+    solved: "Solved",
+    date: "Date",
+    locale: "en-US",
+  },
+};
+
+const t = labels[lang];
+---
+
+<BaseLayout title={`${title} — <(.____.)>`} description={description} lang={lang}>
+  <article class="sheet">
+    <header class="sheet-header">
+      <p class="eyebrow">{course} / {t.sheet} {sheetNumber}</p>
+      <h1>{title}</h1>
+      <p>{description}</p>
+
+      <dl class="meta">
+        <div>
+          <dt>{t.status}</dt>
+          <dd>{statusLabels[lang][status]}</dd>
+        </div>
+
+        <div>
+          <dt>{t.solved}</dt>
+          <dd>{solved} / {total}</dd>
+        </div>
+
+        <div>
+          <dt>{t.date}</dt>
+          <dd>{date.toLocaleDateString(t.locale)}</dd>
+        </div>
+      </dl>
+    </header>
+
+    <div class="content">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .sheet-header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .eyebrow {
+    color: var(--color-muted);
+    font-family: var(--font-mono);
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+  }
+
+  dt {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .content :global(h2) {
+    margin-top: var(--space-xl);
+  }
+</style>

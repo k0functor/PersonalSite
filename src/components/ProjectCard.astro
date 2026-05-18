@@ -1,0 +1,54 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  status: "active" | "planned" | "paused" | "archived";
+  href?: string;
+}
+
+const { title, description, status, href } = Astro.props;
+const Tag = href ? "a" : "div";
+---
+
+<Tag class="project-card" href={href}>
+  <div class="top">
+    <h3>{title}</h3>
+    <span>{status}</span>
+  </div>
+
+  <p>{description}</p>
+</Tag>
+
+<style>
+  .project-card {
+    display: block;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+    text-decoration: none;
+  }
+
+  .top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  span {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    margin-bottom: 0;
+    color: var(--color-muted);
+  }
+</style>

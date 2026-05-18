@@ -1,0 +1,94 @@
+---
+import {
+  routes,
+  getLocalizedPath,
+  getLanguageSwitchPath,
+  type Lang,
+} from "../config/navigation";
+import { getDictionary } from "../i18n";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getDictionary(lang);
+
+const otherLang = lang === "ru" ? "en" : "ru";
+const otherLangLabel = lang === "ru" ? "EN" : "RU";
+
+const switchHref = getLanguageSwitchPath(Astro.url.pathname, otherLang);
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a class="logo" href={getLocalizedPath(lang)}>
+      &lt;(.____.)&gt;
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a href={getLocalizedPath(lang)}>{t.nav.home}</a>
+
+      {routes.map((route) => (
+        <a href={getLocalizedPath(lang, route.href)}>
+          {t.nav[route.key]}
+        </a>
+      ))}
+
+      <a class="lang" href={switchHref}>
+        {otherLangLabel}
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg) 92%, white);
+  }
+
+  .inner {
+    width: min(100% - 2rem, var(--max-width));
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  .nav a {
+    text-decoration: none;
+  }
+
+  .lang {
+    font-weight: 700;
+  }
+
+  @media (max-width: 760px) {
+    .inner {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .nav {
+      justify-content: flex-start;
+    }
+  }
+</style>

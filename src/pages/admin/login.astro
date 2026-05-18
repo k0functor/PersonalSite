@@ -1,0 +1,112 @@
+---
+export const prerender = false;
+
+const title = "Admin Login — <(.____.)>";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="card">
+        <p class="logo">&lt;(.____.)&gt;</p>
+        <h1>Admin login</h1>
+        <p class="muted">Private content editor. The glamorous world of typing text into boxes.</p>
+
+        <form method="post" action="/api/admin/login">
+          <label>
+            Password
+            <input type="password" name="password" autocomplete="current-password" required />
+          </label>
+
+          <button type="submit">Log in</button>
+        </form>
+      </section>
+    </main>
+
+    <style>
+      :root {
+        --bg: #f7f4ed;
+        --text: #181612;
+        --muted: #6f6a5f;
+        --border: #d8d0c2;
+        --card: #fffaf0;
+        --accent: #2f5d50;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .page {
+        width: min(100% - 2rem, 520px);
+        min-height: 100vh;
+        margin-inline: auto;
+        display: grid;
+        place-items: center;
+      }
+
+      .card {
+        width: 100%;
+        padding: 2rem;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+      }
+
+      .logo {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      form {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+
+      label {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      input,
+      button {
+        font: inherit;
+      }
+
+      input {
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: white;
+      }
+
+      button {
+        padding: 0.8rem 1rem;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        cursor: pointer;
+      }
+    </style>
+  </body>
+</html>

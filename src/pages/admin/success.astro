@@ -1,0 +1,107 @@
+---
+export const prerender = false;
+
+import { requireAdmin } from "../../lib/admin/auth";
+
+const redirect = await requireAdmin(Astro.cookies);
+
+if (redirect) {
+  return redirect;
+}
+
+const path = Astro.url.searchParams.get("path") ?? "unknown file";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Content created — &lt;(.____.)&gt;</title>
+  </head>
+
+  <body>
+    <main class="page">
+      <section class="card">
+        <p class="logo">&lt;(.____.)&gt;</p>
+        <h1>Content created</h1>
+
+        <p>
+          GitHub commit was requested for:
+        </p>
+
+        <pre>{path}</pre>
+
+        <p class="muted">
+          If your hosting is connected to GitHub, the site should rebuild after the commit.
+          Such is the sacred ritual: type text, summon API, wait for machines.
+        </p>
+
+        <p>
+          <a href="/admin">Back to admin</a>
+          ·
+          <a href="/admin/new">Create another</a>
+        </p>
+      </section>
+    </main>
+
+    <style>
+      :root {
+        --bg: #f7f4ed;
+        --text: #181612;
+        --muted: #6f6a5f;
+        --border: #d8d0c2;
+        --card: #fffaf0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .page {
+        width: min(100% - 2rem, 680px);
+        min-height: 100vh;
+        margin-inline: auto;
+        display: grid;
+        place-items: center;
+      }
+
+      .card {
+        width: 100%;
+        padding: 2rem;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+      }
+
+      .logo {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      pre {
+        overflow: auto;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: white;
+      }
+
+      a {
+        color: inherit;
+      }
+    </style>
+  </body>
+</html>

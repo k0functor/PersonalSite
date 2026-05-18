@@ -1,28 +1,80 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import SectionCard from "../../components/SectionCard.astro";
+
+const logo = "<(.____.)>";
 ---
 
 <BaseLayout
-  title="<(.____.)> — Home"
-  description="A personal website about mathematics, programming, and game development."
+  title={`${logo} — math, code, and games`}
+  description="A personal website about mathematics, programming, game development, and long-term learning."
   lang="en"
 >
-  <h1>&lt;(.____.)&gt;</h1>
+  <PageHeader
+    title={logo}
+    description="A personal website about mathematics, programming, game development, and long-term learning."
+  />
 
-  <p>
-    A personal website about mathematics, programming, game development,
-    and long-term learning.
-  </p>
+  <section class="intro">
+    <p>
+      I collect notes, projects, devlogs, study materials, and thoughts on
+      building a strong technical and mathematical background over time.
+    </p>
 
-  <section>
-    <h2>Main sections</h2>
-    <ul>
-      <li>Mathematics</li>
-      <li>Programming</li>
-      <li>Game development</li>
-      <li>Blog</li>
-      <li>Projects</li>
-      <li>Future merch</li>
-    </ul>
+    <p>
+      The main topics of this website are mathematics, C++ and Computer Science,
+      indie game development, personal projects, and public long-term learning.
+    </p>
   </section>
+
+  <section class="grid">
+    <SectionCard
+      title="Math"
+      description="Notes, problem solving, MIPT, IUM, algebraic topology, complex analysis, and everything that helps me think more precisely."
+      href="/en/math/"
+    />
+
+    <SectionCard
+      title="Programming"
+      description="C++, STL, algorithms, data structures, Computer Science, development tools, and engineering practice."
+      href="/en/programming/"
+    />
+
+    <SectionCard
+      title="Game"
+      description="A devlog for a game inspired by Slay the Spire and Darkest Dungeon: mechanics, characters, cards, artifacts, and balance."
+      href="/en/game/"
+    />
+
+    <SectionCard
+      title="Blog"
+      description="Notes about learning, development, books, tools, planning, and long-term goals."
+      href="/en/blog/"
+    />
+
+    <SectionCard
+      title="Projects"
+      description="The website, the game, learning projects, experiments, and everything that slowly becomes a working system."
+      href="/en/projects/"
+    />
+
+    <SectionCard
+      title="Merch"
+      description="A future shop section. No cart, checkout, or commercial machinery yet."
+      href="/en/shop/"
+    />
+  </section>
+
+  <style>
+    .intro {
+      margin-bottom: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
 </BaseLayout>

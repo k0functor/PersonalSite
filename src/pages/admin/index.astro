@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+
+import { requireAdmin } from "../../lib/admin/auth";
+
+const redirect = await requireAdmin(Astro.cookies);
+
+if (redirect) {
+  return redirect;
+}
+
+const title = "Admin — <(.____.)>";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <main class="page">
+      <header class="top">
+        <div>
+          <p class="logo">&lt;(.____.)&gt;</p>
+          <h1>Admin</h1>
+          <p class="muted">Create MDX content and commit it to GitHub.</p>
+        </div>
+
+        <form method="post" action="/api/admin/logout">
+          <button type="submit">Log out</button>
+        </form>
+      </header>
+
+      <section class="grid">
+        <a class="card" href="/admin/new?type=math-ium">
+          <h2>IUM solution</h2>
+          <p>Create a LaTeX-ready MDX problem sheet or solution.</p>
+        </a>
+
+        <a class="card" href="/admin/new?type=math-note">
+          <h2>Math note</h2>
+          <p>Create a mathematical note with formulas and proofs.</p>
+        </a>
+
+        <a class="card" href="/admin/new?type=programming-note">
+          <h2>Programming note</h2>
+          <p>Create a C++, CS, tools, or algorithms note.</p>
+        </a>
+
+        <a class="card" href="/admin/new?type=game-devlog">
+          <h2>Game devlog</h2>
+          <p>Create a game development log entry.</p>
+        </a>
+
+        <a class="card" href="/admin/new?type=blog-post">
+          <h2>Blog post</h2>
+          <p>Create a general blog post.</p>
+        </a>
+      </section>
+    </main>
+
+    <style>
+      :root {
+        --bg: #f7f4ed;
+        --text: #181612;
+        --muted: #6f6a5f;
+        --border: #d8d0c2;
+        --card: #fffaf0;
+        --accent: #2f5d50;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .page {
+        width: min(100% - 2rem, 960px);
+        margin: 0 auto;
+        padding: 3rem 0;
+      }
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: start;
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-weight: 700;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        display: block;
+        padding: 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card);
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .card:hover {
+        border-color: var(--accent);
+      }
+
+      button {
+        padding: 0.7rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--card);
+        cursor: pointer;
+      }
+    </style>
+  </body>
+</html>
