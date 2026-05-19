@@ -1,1 +1,30 @@
-[]
+[
+  {
+    "id": "ru-cpp-test",
+    "lang": "ru",
+    "sectionId": "cpp",
+    "slug": "test",
+    "title": "Тест",
+    "description": "Тестовый коммит через админку",
+    "topics": [
+      "Тест"
+    ],
+    "order": 1,
+    "blocks": [
+      {
+        "type": "text",
+        "title": "Тест",
+        "content": "Тут текст"
+      },
+      {
+        "type": "code",
+        "title": "Код",
+        "language": "cpp",
+        "code": "#include <iostream>\r\n\r\nint main() {\r\n    std::cout << \"Hello world!\\n\";\r\n    return 0;\r\n}"
+      }
+    ],
+    "tasks": [],
+    "createdAt": "2026-05-19",
+    "updatedAt": "2026-05-19"
+  }
+]
