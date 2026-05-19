@@ -6,13 +6,7 @@ import {
 
 export const prerender = false;
 
-export async function POST({
-  request,
-  cookies,
-}: {
-  request: Request;
-  cookies: any;
-}) {
+export async function POST({ request, cookies }: { request: Request; cookies: any }) {
   try {
     const formData = await request.formData();
     const password = formData.get("password");

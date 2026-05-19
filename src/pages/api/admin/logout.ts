@@ -6,7 +6,7 @@ export async function POST({ cookies }: { cookies: any }) {
   clearSessionCookie(cookies);
 
   return new Response(null, {
-    status: 302,
+    status: 303,
     headers: {
       Location: "/admin/login",
     },

@@ -1,5 +1,3 @@
-export type IumLang = "ru";
-
 export type IumSheetStatus =
   | "not-started"
   | "in-progress"
@@ -13,7 +11,7 @@ export interface IumSection {
   title: string;
   description: string;
   order: number;
-  lang: IumLang;
+  lang: "ru";
 }
 
 export interface IumSheet {
@@ -28,12 +26,3 @@ export interface IumSheet {
   date: string;
   updatedAt: string;
 }
-
-export const statusLabels: Record<IumSheetStatus, string> = {
-  "not-started": "не начат",
-  "in-progress": "в процессе",
-  "partly-solved": "решён частично",
-  solved: "решён",
-  submitted: "сдан",
-  "needs-rewrite": "нужно переписать",
-};

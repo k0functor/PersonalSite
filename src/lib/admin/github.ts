@@ -1,82 +1,65 @@
-import { getAdminEnv } from "./env";
-import { encodeBase64Utf8 } from "./crypto";
-
-interface CreateFileOptions {
+interface RepoFile {
   path: string;
+  sha: string;
   content: string;
-  message: string;
+  encoding: string;
 }
 
-interface CreateOrUpdateFileOptions {
-  path: string;
-  content: string;
-  message: string;
-  sha?: string;
-  encoded?: boolean;
-}
+function getRequiredEnv(name: string) {
+  const value = import.meta.env[name];
 
-interface RepoFileResponse {
-  type: string;
-  encoding?: string;
-  content?: string;
-  sha?: string;
-  path?: string;
-}
-
-interface GitHubErrorResponse {
-  message?: string;
-  documentation_url?: string;
-}
-
-function toBase64Bytes(bytes: Uint8Array): string {
-  let binary = "";
-
-  for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
   }
 
-  return btoa(binary);
+  return value;
 }
 
-function fromBase64Utf8(input: string): string {
-  const normalized = input.replace(/\n/g, "");
-  const binary = atob(normalized);
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-
-  return new TextDecoder().decode(bytes);
-}
-
-function getContentsUrl(path: string) {
-  const env = getAdminEnv();
-  return new URL(
-    `https://api.github.com/repos/${env.githubOwner}/${env.githubRepo}/contents/${path}`,
-  );
-}
-
-function getHeaders() {
-  const env = getAdminEnv();
-
+function getRepoConfig() {
   return {
-    Accept: "application/vnd.github+json",
-    Authorization: `Bearer ${env.githubToken}`,
-    "Content-Type": "application/json",
-    "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "astro-site-admin",
+    token: getRequiredEnv("GITHUB_TOKEN"),
+    owner: getRequiredEnv("GITHUB_OWNER"),
+    repo: getRequiredEnv("GITHUB_REPO"),
+    branch: import.meta.env.GITHUB_BRANCH || "main",
+    committerName: import.meta.env.GITHUB_COMMITTER_NAME || "Site Admin Bot",
+    committerEmail:
+      import.meta.env.GITHUB_COMMITTER_EMAIL || "site-admin@example.com",
   };
 }
 
-export async function getFileFromGitHub(path: string): Promise<RepoFileResponse | null> {
-  const env = getAdminEnv();
-  const url = getContentsUrl(path);
-  url.searchParams.set("ref", env.githubBranch);
+function getFileUrl(path: string) {
+  const { owner, repo } = getRepoConfig();
+  return `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponentPath(path)}`;
+}
 
-  const response = await fetch(url, {
-    method: "GET",
-    headers: getHeaders(),
+function encodeURIComponentPath(path: string) {
+  return path
+    .split("/")
+    .map((part) => encodeURIComponent(part))
+    .join("/");
+}
+
+export function textToBase64(text: string) {
+  return Buffer.from(text, "utf8").toString("base64");
+}
+
+export function arrayBufferToBase64(buffer: ArrayBuffer) {
+  return Buffer.from(buffer).toString("base64");
+}
+
+export function base64ToText(content: string) {
+  return Buffer.from(content.replace(/\n/g, ""), "base64").toString("utf8");
+}
+
+export async function getRepoFile(path: string): Promise<RepoFile | null> {
+  const { token, branch } = getRepoConfig();
+
+  const response = await fetch(`${getFileUrl(path)}?ref=${encodeURIComponent(branch)}`, {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
   });
 
   if (response.status === 404) {
@@ -84,83 +67,70 @@ export async function getFileFromGitHub(path: string): Promise<RepoFileResponse 
   }
 
   if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as GitHubErrorResponse;
-    throw new Error(data.message ? `GitHub API error: ${data.message}` : `GitHub API error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`GitHub file read failed: ${response.status} ${errorText}`);
   }
 
-  return (await response.json()) as RepoFileResponse;
-}
+  const data = await response.json();
 
-export async function createOrUpdateFileInGitHub({
-  path,
-  content,
-  message,
-  sha,
-  encoded = false,
-}: CreateOrUpdateFileOptions) {
-  const env = getAdminEnv();
-  const response = await fetch(getContentsUrl(path), {
-    method: "PUT",
-    headers: getHeaders(),
-    body: JSON.stringify({
-      message,
-      content: encoded ? content : encodeBase64Utf8(content),
-      branch: env.githubBranch,
-      sha,
-      committer: {
-        name: env.githubCommitterName,
-        email: env.githubCommitterEmail,
-      },
-    }),
-  });
-
-  if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as GitHubErrorResponse;
-    throw new Error(data.message ? `GitHub API error: ${data.message}` : `GitHub API error: ${response.status}`);
+  if (Array.isArray(data)) {
+    throw new Error(`Expected file but got directory: ${path}`);
   }
 
-  return response.json();
+  return data;
 }
 
-export async function createFileInGitHub({
-  path,
-  content,
-  message,
-}: CreateFileOptions) {
-  return createOrUpdateFileInGitHub({ path, content, message });
-}
+export async function readJsonFile<T>(path: string, fallback: T): Promise<{ data: T; sha?: string }> {
+  const file = await getRepoFile(path);
 
-export async function readJsonFileFromGitHub<T>(path: string, fallback: T): Promise<{ data: T; sha?: string }> {
-  const file = await getFileFromGitHub(path);
-
-  if (!file || !file.content) {
+  if (!file) {
     return { data: fallback };
   }
 
+  const text = base64ToText(file.content);
   return {
-    data: JSON.parse(fromBase64Utf8(file.content)) as T,
+    data: JSON.parse(text) as T,
     sha: file.sha,
   };
 }
 
-export async function writeJsonFileToGitHub(path: string, data: unknown, message: string, sha?: string) {
-  return createOrUpdateFileInGitHub({
-    path,
-    content: `${JSON.stringify(data, null, 2)}\n`,
-    message,
-    sha,
-  });
-}
+export async function createOrUpdateRepoFile(options: {
+  path: string;
+  contentBase64: string;
+  message: string;
+  sha?: string;
+}) {
+  const { token, branch, committerName, committerEmail } = getRepoConfig();
 
-export async function uploadBinaryFileToGitHub(path: string, file: File, message: string) {
-  const existing = await getFileFromGitHub(path);
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  const body: Record<string, unknown> = {
+    message: options.message,
+    content: options.contentBase64,
+    branch,
+    committer: {
+      name: committerName,
+      email: committerEmail,
+    },
+  };
 
-  return createOrUpdateFileInGitHub({
-    path,
-    content: toBase64Bytes(bytes),
-    message,
-    sha: existing?.sha,
-    encoded: true,
+  if (options.sha) {
+    body.sha = options.sha;
+  }
+
+  const response = await fetch(getFileUrl(options.path), {
+    method: "PUT",
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+    body: JSON.stringify(body),
   });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`GitHub file write failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
 }

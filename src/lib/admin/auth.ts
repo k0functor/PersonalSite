@@ -1,104 +1,93 @@
-import type { AstroCookies } from "astro";
-import { getAdminEnv } from "./env";
-import { sign, verifySignature } from "./crypto";
+const SESSION_COOKIE_NAME = "personal_site_admin_session";
 
-const COOKIE_NAME = "site_admin_session";
-const MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
+function getRequiredEnv(name: string) {
+  const value = import.meta.env[name];
 
-interface SessionPayload {
-  role: "admin";
-  exp: number;
-}
-
-function encodePayload(payload: SessionPayload): string {
-  return btoa(JSON.stringify(payload));
-}
-
-function decodePayload(encoded: string): SessionPayload | null {
-  try {
-    return JSON.parse(atob(encoded)) as SessionPayload;
-  } catch {
-    return null;
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
   }
+
+  return value;
 }
 
-export async function createSessionToken(): Promise<string> {
-  const { sessionSecret } = getAdminEnv();
+function toBase64Url(buffer: ArrayBuffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
 
-  const payload = encodePayload({
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
+}
+
+async function sign(value: string) {
+  const secret = getRequiredEnv("ADMIN_SESSION_SECRET");
+  const encoder = new TextEncoder();
+
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(value));
+  return toBase64Url(signature);
+}
+
+export function checkPassword(password: string) {
+  return password === getRequiredEnv("ADMIN_PASSWORD");
+}
+
+export async function createSessionToken() {
+  const payload = JSON.stringify({
     role: "admin",
-    exp: Math.floor(Date.now() / 1000) + MAX_AGE_SECONDS,
+    createdAt: Date.now(),
   });
 
-  const signature = await sign(payload, sessionSecret);
+  const payloadBase64 = btoa(payload);
+  const signature = await sign(payloadBase64);
 
-  return `${payload}.${signature}`;
+  return `${payloadBase64}.${signature}`;
 }
 
-export async function isValidSessionToken(token: string | undefined): Promise<boolean> {
-  if (!token) {
+export async function verifySessionToken(token?: string) {
+  if (!token || !token.includes(".")) {
     return false;
   }
 
-  const { sessionSecret } = getAdminEnv();
-  const [payload, signature] = token.split(".");
+  const [payloadBase64, signature] = token.split(".");
 
-  if (!payload || !signature) {
+  if (!payloadBase64 || !signature) {
     return false;
   }
 
-  const validSignature = await verifySignature(payload, signature, sessionSecret);
-
-  if (!validSignature) {
-    return false;
-  }
-
-  const decoded = decodePayload(payload);
-
-  if (!decoded || decoded.role !== "admin") {
-    return false;
-  }
-
-  return decoded.exp > Math.floor(Date.now() / 1000);
+  const expectedSignature = await sign(payloadBase64);
+  return signature === expectedSignature;
 }
 
-export async function isAdmin(cookies: AstroCookies): Promise<boolean> {
-  const token = cookies.get(COOKIE_NAME)?.value;
-  return isValidSessionToken(token);
-}
-
-export async function requireAdmin(cookies: AstroCookies): Promise<Response | null> {
-  const valid = await isAdmin(cookies);
-
-  if (valid) {
-    return null;
-  }
-
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: "/admin/login",
-    },
-  });
-}
-
-export function setSessionCookie(cookies: AstroCookies, token: string): void {
-  cookies.set(COOKIE_NAME, token, {
+export function setSessionCookie(cookies: any, token: string) {
+  cookies.set(SESSION_COOKIE_NAME, token, {
     path: "/",
     httpOnly: true,
-    sameSite: "strict",
+    sameSite: "lax",
     secure: import.meta.env.PROD,
-    maxAge: MAX_AGE_SECONDS,
+    maxAge: 60 * 60 * 24 * 7,
   });
 }
 
-export function clearSessionCookie(cookies: AstroCookies): void {
-  cookies.delete(COOKIE_NAME, {
+export function clearSessionCookie(cookies: any) {
+  cookies.delete(SESSION_COOKIE_NAME, {
     path: "/",
   });
 }
 
-export function checkPassword(password: string): boolean {
-  const { adminPassword } = getAdminEnv();
-  return password === adminPassword;
+export async function isAdminRequest(cookies: any) {
+  const token = cookies.get(SESSION_COOKIE_NAME)?.value;
+  return verifySessionToken(token);
 }
