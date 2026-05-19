@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "id": "complex-analysis",
+    "titleRu": "Комплексный анализ",
+    "titleEn": "Complex Analysis",
+    "descriptionRu": "Заметки по курсу комплексного анализа в МФТИ.",
+    "descriptionEn": "Notes on Complex Analysis course at MIPT.",
+    "order": 2
+  }
+]
