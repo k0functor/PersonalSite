@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import ProgrammingSectionCard from "../../../components/programming/ProgrammingSectionCard.astro";
+import { getSortedProgrammingSections } from "../../../lib/programming/catalog";
+
+const logo = "<(.____.)>";
+const sections = getSortedProgrammingSections();
+---
+
+<BaseLayout
+  title={`Программирование — ${logo}`}
+  description="C++, Python, алгоритмы, структуры данных и практические материалы с кодом."
+  lang="ru"
+>
+  <PageHeader
+    title="Программирование"
+    description="Материалы по C++, Python и библиотекам, алгоритмам и структурам данных."
+  />
+
+  <section class="grid">
+    {sections.map((section) => <ProgrammingSectionCard section={section} lang="ru" />)}
+  </section>
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

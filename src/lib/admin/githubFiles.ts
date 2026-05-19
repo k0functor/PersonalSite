@@ -142,6 +142,49 @@ export async function writeRepoTextFile(params: {
   });
 }
 
+export async function deleteRepoFile(params: {
+  path: string;
+  message: string;
+  skipMissing?: boolean;
+}): Promise<boolean> {
+  const config = getGitHubConfig();
+  const existing = await getRepoFile(params.path);
+
+  if (!existing) {
+    if (params.skipMissing ?? true) {
+      return false;
+    }
+
+    throw new Error(`Файл ${params.path} не найден в репозитории.`);
+  }
+
+  const response = await fetch(getContentsUrl(config, params.path), {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${config.token}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+    body: JSON.stringify({
+      message: params.message,
+      sha: existing.sha,
+      branch: config.branch,
+      committer: {
+        name: config.committerName,
+        email: config.committerEmail,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`GitHub delete file failed: ${response.status} ${text}`);
+  }
+
+  return true;
+}
+
 export async function fileToBase64(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
   return Buffer.from(arrayBuffer).toString("base64");

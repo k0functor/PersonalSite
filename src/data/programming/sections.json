@@ -1,0 +1,34 @@
+[
+  {
+    "id": "cpp",
+    "titleRu": "C++",
+    "titleEn": "C++",
+    "descriptionRu": "Материалы по современному C++, STL, RAII, шаблонам, CMake и инженерной практике.",
+    "descriptionEn": "Materials on modern C++, STL, RAII, templates, CMake, and engineering practice.",
+    "order": 1
+  },
+  {
+    "id": "python",
+    "titleRu": "Python и библиотеки",
+    "titleEn": "Python and Libraries",
+    "descriptionRu": "Python, стандартная библиотека, полезные библиотеки, скрипты и автоматизация.",
+    "descriptionEn": "Python, the standard library, useful libraries, scripts, and automation.",
+    "order": 2
+  },
+  {
+    "id": "algorithms",
+    "titleRu": "Алгоритмы",
+    "titleEn": "Algorithms",
+    "descriptionRu": "Алгоритмические идеи, задачи, решения, разборы и код.",
+    "descriptionEn": "Algorithmic ideas, problems, solutions, explanations, and code.",
+    "order": 3
+  },
+  {
+    "id": "data-structures",
+    "titleRu": "Структуры данных",
+    "titleEn": "Data Structures",
+    "descriptionRu": "Массивы, списки, стеки, очереди, деревья, хеш-таблицы, кучи и графовые структуры.",
+    "descriptionEn": "Arrays, lists, stacks, queues, trees, hash tables, heaps, and graph structures.",
+    "order": 4
+  }
+]

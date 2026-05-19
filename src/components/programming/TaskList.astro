@@ -1,0 +1,62 @@
+---
+import type { ProgrammingTask } from "../../lib/programming/catalog";
+
+interface Props {
+  tasks: ProgrammingTask[];
+  lang?: "ru" | "en";
+}
+
+const { tasks, lang = "ru" } = Astro.props;
+const answerLabel = lang === "ru" ? "Показать ответ" : "Show answer";
+---
+
+{tasks.length > 0 && (
+  <section class="tasks">
+    <h2>{lang === "ru" ? "Задачи" : "Tasks"}</h2>
+
+    <ol>
+      {tasks.map((task) => (
+        <li>
+          <p>{task.question}</p>
+          <details>
+            <summary>{answerLabel}</summary>
+            <p>{task.answer}</p>
+          </details>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .tasks {
+    margin-top: var(--space-xl);
+  }
+
+  ol {
+    display: grid;
+    gap: var(--space-md);
+    padding-left: 1.25rem;
+  }
+
+  li {
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+  }
+
+  li p:first-child {
+    margin-top: 0;
+  }
+
+  details {
+    margin-top: var(--space-md);
+  }
+
+  summary {
+    cursor: pointer;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>

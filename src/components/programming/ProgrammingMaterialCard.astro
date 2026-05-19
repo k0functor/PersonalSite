@@ -1,0 +1,68 @@
+---
+import type { ProgrammingMaterial, Lang } from "../../lib/programming/catalog";
+
+interface Props {
+  material: ProgrammingMaterial;
+  lang: Lang;
+}
+
+const { material, lang } = Astro.props;
+---
+
+<a class="material-card" href={`/${lang}/programming/${material.sectionId}/${material.slug}/`}>
+  <h3>{material.title}</h3>
+  <p>{material.description}</p>
+
+  {material.topics.length > 0 && (
+    <ul class="topics">
+      {material.topics.map((topic) => <li>{topic}</li>)}
+    </ul>
+  )}
+</a>
+
+<style>
+  .material-card {
+    display: block;
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+    color: inherit;
+    text-decoration: none;
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .material-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(2px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  p {
+    color: var(--color-muted);
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0;
+    margin: var(--space-md) 0 0;
+    list-style: none;
+  }
+
+  .topics li {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+</style>

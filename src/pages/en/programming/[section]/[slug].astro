@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../../components/PageHeader.astro";
+import CopyCodeBlock from "../../../../components/programming/CopyCodeBlock.astro";
+import TaskList from "../../../../components/programming/TaskList.astro";
+import {
+  getProgrammingMaterial,
+  getProgrammingMaterialsBySection,
+  getProgrammingSectionById,
+  getSectionTitle,
+  getSortedProgrammingSections,
+} from "../../../../lib/programming/catalog";
+
+export function getStaticPaths() {
+  const paths = [];
+
+  for (const section of getSortedProgrammingSections()) {
+    const materials = getProgrammingMaterialsBySection(section.id, "en");
+
+    for (const material of materials) {
+      paths.push({
+        params: {
+          section: section.id,
+          slug: material.slug,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const sectionId = Astro.params.section;
+const slug = Astro.params.slug;
+const material =
+  typeof sectionId === "string" && typeof slug === "string"
+    ? getProgrammingMaterial(sectionId, slug, "en")
+    : undefined;
+const section = typeof sectionId === "string" ? getProgrammingSectionById(sectionId) : undefined;
+
+if (!material || !section) {
+  return Astro.redirect("/en/programming/");
+}
+
+const logo = "<(.____.)>";
+const sectionTitle = getSectionTitle(section, "en");
+---
+
+<BaseLayout title={`${material.title} — ${logo}`} description={material.description} lang="en">
+  <p><a href={`/en/programming/${section.id}/`}>← {sectionTitle}</a></p>
+
+  <PageHeader title={material.title} description={material.description} />
+
+  {material.topics.length > 0 && (
+    <ul class="topics">
+      {material.topics.map((topic) => <li>{topic}</li>)}
+    </ul>
+  )}
+
+  <article class="content">
+    {material.blocks.map((block) => (
+      block.type === "text" ? (
+        <section class="text-block">
+          {block.title && <h2>{block.title}</h2>}
+          {block.content.split("\n\n").map((paragraph) => <p>{paragraph}</p>)}
+        </section>
+      ) : (
+        <CopyCodeBlock title={block.title} language={block.language} code={block.code} />
+      )
+    ))}
+  </article>
+
+  <TaskList tasks={material.tasks} lang="en" />
+
+  <style>
+    .topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 0;
+      margin: 0 0 var(--space-xl);
+      list-style: none;
+    }
+
+    .topics li {
+      padding: 0.25rem 0.45rem;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: var(--color-card);
+      color: var(--color-muted);
+    }
+
+    .text-block + .text-block {
+      margin-top: var(--space-xl);
+    }
+  </style>
+</BaseLayout>

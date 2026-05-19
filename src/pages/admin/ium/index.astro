@@ -12,9 +12,16 @@ if (!isAdmin) {
 }
 
 const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+const sortedSheets = [...sheets].sort((a, b) =>
+  a.sectionId.localeCompare(b.sectionId, "ru") || a.id.localeCompare(b.id, "ru", { numeric: true })
+);
 
 function countSheets(sectionId: string) {
   return sheets.filter((sheet) => sheet.sectionId === sectionId).length;
+}
+
+function sectionTitle(sectionId: string) {
+  return sections.find((section) => section.id === sectionId)?.title ?? sectionId;
 }
 ---
 
@@ -27,11 +34,12 @@ function countSheets(sectionId: string) {
 
   <body>
     <main class="page">
-      <p><a href="/admin/">← Админка</a></p>
+      <p><a href="/admin/math/">← Математика</a></p>
 
       <header class="header">
+        <p class="logo">&lt;(.____.)&gt;</p>
         <h1>НМУ</h1>
-        <p>Управление разделами и PDF-листочками.</p>
+        <p>Управление разделами, PDF-листочками и решениями.</p>
       </header>
 
       <section class="actions">
@@ -39,6 +47,7 @@ function countSheets(sectionId: string) {
         <a href="/admin/ium/delete-section/">Удалить раздел</a>
         <a href="/admin/ium/new-sheet/">Добавить PDF-листочек</a>
         <a href="/admin/ium/edit-sheet/">Редактировать листочек</a>
+        <a href="/admin/ium/delete-sheet/">Удалить листочек</a>
       </section>
 
       <section>
@@ -47,7 +56,7 @@ function countSheets(sectionId: string) {
         {sortedSections.length > 0 ? (
           <div class="list">
             {sortedSections.map((section) => (
-              <article class="card">
+              <article class="card section-card">
                 <div>
                   <h3>{section.title}</h3>
                   <p>{section.description}</p>
@@ -74,6 +83,31 @@ function countSheets(sectionId: string) {
           <p>Разделов пока нет.</p>
         )}
       </section>
+
+      <section>
+        <h2>Листочки</h2>
+
+        {sortedSheets.length > 0 ? (
+          <div class="list">
+            {sortedSheets.map((sheet) => (
+              <article class="card sheet-card">
+                <div>
+                  <h3>{sheet.title}</h3>
+                  <p>{sheet.description}</p>
+                  <p class="muted">{sectionTitle(sheet.sectionId)} / {sheet.id} / {sheet.status}</p>
+                </div>
+
+                <div class="sheet-actions">
+                  <a href={`/ru/math/ium/${sheet.sectionId}/${sheet.id}/`} target="_blank">Открыть</a>
+                  <a href={`/admin/ium/edit-sheet/${sheet.sectionId}/${sheet.id}/`}>Редактировать</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p>Листочков пока нет.</p>
+        )}
+      </section>
     </main>
   </body>
 </html>
@@ -95,6 +129,11 @@ function countSheets(sectionId: string) {
     padding: 2rem 0;
   }
 
+  .logo {
+    font-family: monospace;
+    font-weight: 700;
+  }
+
   .header {
     margin-bottom: 1.5rem;
   }
@@ -111,7 +150,8 @@ function countSheets(sectionId: string) {
     color: inherit;
   }
 
-  .actions a {
+  .actions a,
+  .sheet-actions a {
     display: inline-flex;
     padding: 0.55rem 0.85rem;
     border: 1px solid #cfc3b0;
@@ -120,8 +160,13 @@ function countSheets(sectionId: string) {
     text-decoration: none;
   }
 
-  .actions a:hover {
+  .actions a:hover,
+  .sheet-actions a:hover {
     background: #f3eadb;
+  }
+
+  section + section {
+    margin-top: 2.5rem;
   }
 
   .list {
@@ -143,8 +188,9 @@ function countSheets(sectionId: string) {
     margin: 0;
   }
 
+  .muted,
   p {
-    max-width: 72ch;
+    color: #6f6a5f;
   }
 
   dl {
@@ -169,9 +215,21 @@ function countSheets(sectionId: string) {
     font-weight: 600;
   }
 
+  .sheet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-content: start;
+    gap: 0.5rem;
+  }
+
   @media (max-width: 720px) {
     .card {
       grid-template-columns: 1fr;
+    }
+
+    .sheet-actions {
+      justify-content: flex-start;
     }
   }
 </style>

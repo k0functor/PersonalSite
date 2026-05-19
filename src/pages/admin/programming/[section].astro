@@ -1,0 +1,117 @@
+---
+export const prerender = false;
+
+import { isAdminRequest } from "../../../lib/admin/auth";
+import {
+  getProgrammingMaterialsBySection,
+  getProgrammingSectionById,
+  getSectionDescription,
+  getSectionTitle,
+} from "../../../lib/programming/catalog";
+
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
+
+const sectionId = Astro.params.section;
+const section = typeof sectionId === "string" ? getProgrammingSectionById(sectionId) : undefined;
+
+if (!section) {
+  return Astro.redirect("/admin/programming/?error=section-not-found");
+}
+
+const materials = [
+  ...getProgrammingMaterialsBySection(section.id, "ru"),
+  ...getProgrammingMaterialsBySection(section.id, "en"),
+].sort((a, b) => a.lang.localeCompare(b.lang) || a.order - b.order || a.title.localeCompare(b.title));
+
+const error = Astro.url.searchParams.get("error");
+const created = Astro.url.searchParams.get("created");
+const updated = Astro.url.searchParams.get("updated");
+const deleted = Astro.url.searchParams.get("deleted");
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{getSectionTitle(section, "ru")} — программирование</title>
+  </head>
+
+  <body>
+    <main class="admin">
+      <p><a href="/admin/programming/">← Программирование</a></p>
+
+      <header class="header">
+        <div>
+          <h1>{getSectionTitle(section, "ru")}</h1>
+          <p>{getSectionDescription(section, "ru")}</p>
+        </div>
+
+        <a class="button" href={`/admin/programming/new/?section=${section.id}`}>Добавить материал</a>
+      </header>
+
+      {created && <p class="success">Материал добавлен. Если смотришь локально, после commit через GitHub сделай git pull.</p>}
+      {updated && <p class="success">Материал обновлён. Если смотришь локально, после commit через GitHub сделай git pull.</p>}
+      {deleted && <p class="success">Материал удалён. Если смотришь локально, после commit через GitHub сделай git pull.</p>}
+      {error && <p class="error">Ошибка: {error}</p>}
+
+      <section>
+        <h2>Материалы раздела</h2>
+
+        {materials.length > 0 ? (
+          <div class="list">
+            {materials.map((material) => (
+              <article class="row">
+                <div>
+                  <h3>{material.title}</h3>
+                  <p>{material.lang.toUpperCase()} / {material.slug} / порядок: {material.order}</p>
+                  {material.topics.length > 0 && <p>Темы: {material.topics.join(", ")}</p>}
+                </div>
+
+                <div class="row-actions">
+                  <a href={`/${material.lang}/programming/${material.sectionId}/${material.slug}/`} target="_blank">Открыть</a>
+                  <a href={`/admin/programming/edit/${material.id}/`}>Редактировать</a>
+                  <form method="post" action="/api/admin/programming/delete-material" data-confirm-delete>
+                    <input type="hidden" name="id" value={material.id} />
+                    <button type="submit">Удалить</button>
+                  </form>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p>В этом разделе пока нет материалов.</p>
+        )}
+      </section>
+    </main>
+
+    <script>
+      document.querySelectorAll("[data-confirm-delete]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+          const ok = window.confirm("Удалить материал? Это действие изменит JSON в репозитории.");
+          if (!ok) event.preventDefault();
+        });
+      });
+    </script>
+
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f7f4ed; color: #181612; }
+      .admin { width: min(100% - 2rem, 1040px); margin: 2rem auto; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+      .header p, .row p { color: #6f6a5f; }
+      .button, button, .row-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 2rem; padding: 0.35rem 0.7rem; border: 1px solid #cfc3b0; border-radius: 4px; background: #ebe1d0; color: inherit; text-decoration: none; cursor: pointer; font: inherit; }
+      .button:hover, button:hover, .row-actions a:hover { background: #f3eadb; }
+      .list { display: grid; gap: 0.75rem; }
+      .row { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1rem; border: 1px solid #cfc3b0; border-radius: 12px; background: #fffaf0; }
+      .row h3 { margin-top: 0; }
+      .row-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      form { margin: 0; }
+      .success { padding: 0.75rem; border: 1px solid #2f5d50; border-radius: 8px; background: #eef7f2; color: #2f5d50; }
+      .error { padding: 0.75rem; border: 1px solid #b00020; border-radius: 8px; background: #fff0f2; color: #b00020; }
+      @media (max-width: 760px) { .header, .row { align-items: flex-start; flex-direction: column; } }
+    </style>
+  </body>
+</html>

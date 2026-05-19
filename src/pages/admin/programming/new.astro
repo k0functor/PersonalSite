@@ -1,0 +1,177 @@
+---
+export const prerender = false;
+
+import { isAdminRequest } from "../../../lib/admin/auth";
+import { getProgrammingSectionById, getSortedProgrammingSections, getSectionTitle } from "../../../lib/programming/catalog";
+
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
+
+const sections = getSortedProgrammingSections();
+const selectedSectionId = Astro.url.searchParams.get("section") ?? sections[0]?.id ?? "cpp";
+const selectedSection = getProgrammingSectionById(selectedSectionId);
+const error = Astro.url.searchParams.get("error");
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Добавить материал — программирование</title>
+  </head>
+
+  <body>
+    <main class="admin">
+      <p><a href={selectedSection ? `/admin/programming/${selectedSection.id}/` : "/admin/programming/"}>← Назад к разделу</a></p>
+
+      <h1>Добавить материал</h1>
+      {selectedSection && <p>Раздел: <strong>{getSectionTitle(selectedSection, "ru")}</strong></p>}
+      {error && <p class="error">Ошибка: {error}</p>}
+
+      <form method="post" action="/api/admin/programming/create-material" data-programming-form>
+        <fieldset>
+          <legend>Основное</legend>
+
+          <label>
+            Язык
+            <select name="lang" required>
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+
+          <label>
+            Раздел
+            <select name="sectionId" required>
+              {sections.map((section) => (
+                <option value={section.id} selected={section.id === selectedSectionId}>{getSectionTitle(section, "ru")}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Slug
+            <input name="slug" required placeholder="raii-basics" />
+          </label>
+
+          <label>
+            Название
+            <input name="title" required />
+          </label>
+
+          <label>
+            Описание
+            <textarea name="description" rows="3" required></textarea>
+          </label>
+
+          <label>
+            Темы через запятую
+            <input name="topics" placeholder="управление ресурсами, основы C++" />
+          </label>
+
+          <label>
+            Порядок сортировки
+            <input name="order" type="number" value="1" min="0" />
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Блоки текста и кода</legend>
+          <p class="hint">Добавляй блоки в нужном порядке. Код сохраняется только для копирования.</p>
+
+          <div id="blocks"></div>
+
+          <div class="inline-actions">
+            <button type="button" data-add-text>Добавить текст</button>
+            <button type="button" data-add-code>Добавить код</button>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Задачи и ответы</legend>
+          <p class="hint">Ответы на сайте будут скрыты и откроются по нажатию.</p>
+
+          <div id="tasks"></div>
+
+          <button type="button" data-add-task>Добавить задачу</button>
+        </fieldset>
+
+        <button class="submit" type="submit">Создать материал</button>
+      </form>
+    </main>
+
+    <template id="text-block-template">
+      <article class="block" data-block>
+        <input type="hidden" name="blockType" value="text" />
+        <label>Заголовок блока <input name="blockTitle" /></label>
+        <label>Текст <textarea name="blockContent" rows="6" required></textarea></label>
+        <input type="hidden" name="blockLanguage" value="" />
+        <button type="button" data-remove>Удалить блок</button>
+      </article>
+    </template>
+
+    <template id="code-block-template">
+      <article class="block" data-block>
+        <input type="hidden" name="blockType" value="code" />
+        <label>Заголовок блока <input name="blockTitle" /></label>
+        <label>Язык кода <input name="blockLanguage" placeholder="cpp" required /></label>
+        <label>Код <textarea name="blockContent" rows="10" required></textarea></label>
+        <button type="button" data-remove>Удалить блок</button>
+      </article>
+    </template>
+
+    <template id="task-template">
+      <article class="block" data-task>
+        <label>Задача <textarea name="taskQuestion" rows="4" required></textarea></label>
+        <label>Ответ <textarea name="taskAnswer" rows="4" required></textarea></label>
+        <button type="button" data-remove>Удалить задачу</button>
+      </article>
+    </template>
+
+    <script>
+      const blocks = document.querySelector("#blocks");
+      const tasks = document.querySelector("#tasks");
+      const textTemplate = document.querySelector("#text-block-template");
+      const codeTemplate = document.querySelector("#code-block-template");
+      const taskTemplate = document.querySelector("#task-template");
+
+      function appendTemplate(container, template) {
+        const node = template.content.cloneNode(true);
+        container.appendChild(node);
+      }
+
+      document.querySelector("[data-add-text]").addEventListener("click", () => appendTemplate(blocks, textTemplate));
+      document.querySelector("[data-add-code]").addEventListener("click", () => appendTemplate(blocks, codeTemplate));
+      document.querySelector("[data-add-task]").addEventListener("click", () => appendTemplate(tasks, taskTemplate));
+
+      document.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-remove]");
+        if (!button) return;
+        button.closest("[data-block], [data-task]")?.remove();
+      });
+
+      appendTemplate(blocks, textTemplate);
+    </script>
+
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f7f4ed; color: #181612; }
+      .admin { width: min(100% - 2rem, 900px); margin: 2rem auto; }
+      form { display: grid; gap: 1rem; }
+      fieldset { display: grid; gap: 1rem; padding: 1rem; border: 1px solid #cfc3b0; border-radius: 12px; background: #fffaf0; }
+      label { display: grid; gap: 0.35rem; font-weight: 600; }
+      input, select, textarea { width: 100%; box-sizing: border-box; padding: 0.5rem; border: 1px solid #cfc3b0; border-radius: 6px; font: inherit; background: #fffaf0; }
+      textarea { font-family: inherit; }
+      .block { display: grid; gap: 0.75rem; padding: 1rem; border: 1px dashed #cfc3b0; border-radius: 10px; background: #f7f4ed; }
+      .block + .block { margin-top: 0.75rem; }
+      .inline-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+      button { width: fit-content; padding: 0.45rem 0.8rem; border: 1px solid #cfc3b0; border-radius: 4px; background: #ebe1d0; cursor: pointer; }
+      button:hover { background: #f3eadb; }
+      .submit { margin-top: 1rem; font-weight: 700; }
+      .hint { margin: 0; color: #6f6a5f; }
+      .error { padding: 0.75rem; border: 1px solid #b00020; border-radius: 8px; background: #fff0f2; color: #b00020; }
+    </style>
+  </body>
+</html>
