@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import StudySectionCard from "../../../components/math/StudySectionCard.astro";
+import sections from "../../../data/math/studySections.json";
+
+const logo = "<(.____.)>";
+const sortedSections = [...sections].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+---
+
+<BaseLayout
+  title={`Учёба — ${logo}`}
+  description="Учебные разделы по математике: теория, задачи и экзамен."
+  lang="ru"
+>
+  <PageHeader
+    title="Учёба"
+    description="Учебные разделы по математике. В каждом разделе есть теория, задачи и экзаменационные материалы."
+  />
+
+  {sortedSections.length > 0 ? (
+    <section class="grid">
+      {sortedSections.map((section) => <StudySectionCard section={section} lang="ru" />)}
+    </section>
+  ) : (
+    <p>Учебные разделы пока не добавлены.</p>
+  )}
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

@@ -10,12 +10,18 @@ type IumSection = {
   lang: "ru" | "en";
 };
 
+type IumSheet = {
+  id: string;
+  sectionId: string;
+};
+
 type GitHubFile = {
   content: string;
   sha?: string;
 };
 
 const SECTIONS_PATH = "src/data/ium/sections.json";
+const SHEETS_PATH = "src/data/ium/sheets.json";
 
 function getRequiredEnv(name: string) {
   const value = import.meta.env[name];
@@ -110,10 +116,6 @@ async function putRepoFile(path: string, content: string, message: string, sha?:
   }
 }
 
-function isValidSlug(value: string) {
-  return /^[a-z0-9-]+$/.test(value);
-}
-
 function redirect(location: string) {
   return new Response(null, {
     status: 303,
@@ -132,45 +134,42 @@ export async function POST({ request, cookies }: { request: Request; cookies: an
 
   try {
     const formData = await request.formData();
-
     const id = String(formData.get("id") || "").trim();
-    const title = String(formData.get("title") || "").trim();
-    const description = String(formData.get("description") || "").trim();
-    const order = Number(formData.get("order") || "0");
-    const lang = String(formData.get("lang") || "ru") as "ru" | "en";
 
-    if (!id || !title || !description || !Number.isFinite(order) || !isValidSlug(id) || lang !== "ru") {
-      return redirect("/admin/ium/new-section/?error=invalid");
+    if (!id) {
+      return redirect("/admin/ium/delete-section/?error=not-found");
     }
 
-    const file = await getRepoFile(SECTIONS_PATH);
-    const sections: IumSection[] = file ? JSON.parse(file.content) : [];
+    const sectionsFile = await getRepoFile(SECTIONS_PATH);
+    const sheetsFile = await getRepoFile(SHEETS_PATH);
 
-    if (sections.some((section) => section.id === id)) {
-      return redirect("/admin/ium/new-section/?error=exists");
+    const sections: IumSection[] = sectionsFile ? JSON.parse(sectionsFile.content) : [];
+    const sheets: IumSheet[] = sheetsFile ? JSON.parse(sheetsFile.content) : [];
+
+    const sectionExists = sections.some((section) => section.id === id);
+
+    if (!sectionExists) {
+      return redirect("/admin/ium/delete-section/?error=not-found");
     }
 
-    const nextSections = [
-      ...sections,
-      {
-        id,
-        title,
-        description,
-        order,
-        lang,
-      },
-    ].sort((a, b) => a.order - b.order);
+    const hasSheets = sheets.some((sheet) => sheet.sectionId === id);
+
+    if (hasSheets) {
+      return redirect("/admin/ium/delete-section/?error=has-sheets");
+    }
+
+    const nextSections = sections.filter((section) => section.id !== id);
 
     await putRepoFile(
       SECTIONS_PATH,
       `${JSON.stringify(nextSections, null, 2)}\n`,
-      `Add IUM section: ${title}`,
-      file?.sha
+      `Delete IUM section: ${id}`,
+      sectionsFile?.sha
     );
 
-    return redirect("/admin/ium/new-section/?success=created");
+    return redirect("/admin/ium/delete-section/?success=deleted");
   } catch (error) {
-    console.error("Create IUM section error:", error);
-    return redirect("/admin/ium/new-section/?error=server");
+    console.error("Delete IUM section error:", error);
+    return redirect("/admin/ium/delete-section/?error=server");
   }
 }

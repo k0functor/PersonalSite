@@ -1,0 +1,36 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import StudySectionCard from "../../../components/math/StudySectionCard.astro";
+import sections from "../../../data/math/studySections.json";
+
+const logo = "<(.____.)>";
+const sortedSections = [...sections].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+---
+
+<BaseLayout
+  title={`Study — ${logo}`}
+  description="Study sections in mathematics: theory, problems, and exams."
+  lang="en"
+>
+  <PageHeader
+    title="Study"
+    description="Study sections in mathematics. Each section contains theory, problems, and exam materials."
+  />
+
+  {sortedSections.length > 0 ? (
+    <section class="grid">
+      {sortedSections.map((section) => <StudySectionCard section={section} lang="en" />)}
+    </section>
+  ) : (
+    <p>No study sections have been added yet.</p>
+  )}
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

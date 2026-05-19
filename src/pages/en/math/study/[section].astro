@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../../components/PageHeader.astro";
+import StudyMaterialCard from "../../../../components/math/StudyMaterialCard.astro";
+import sections from "../../../../data/math/studySections.json";
+import materials from "../../../../data/math/studyMaterials.json";
+
+export function getStaticPaths() {
+  return sections.map((section) => ({
+    params: { section: section.id },
+  }));
+}
+
+const { section: sectionId } = Astro.params;
+const section = sections.find((item) => item.id === sectionId);
+
+if (!section) {
+  return Astro.redirect("/en/math/study/");
+}
+
+const logo = "<(.____.)>";
+const sectionMaterials = materials.filter((item) => item.sectionId === section.id);
+const groups = [
+  { kind: "theory", title: "Theory" },
+  { kind: "problems", title: "Problems" },
+  { kind: "exam", title: "Exam" },
+];
+---
+
+<BaseLayout
+  title={`${section.titleEn} — Study — ${logo}`}
+  description={section.descriptionEn}
+  lang="en"
+>
+  <p><a href="/en/math/study/">← Study</a></p>
+
+  <PageHeader title={section.titleEn} description={section.descriptionEn} />
+
+  {groups.map((group) => {
+    const items = sectionMaterials.filter((item) => item.kind === group.kind);
+
+    return (
+      <section class="group">
+        <h2>{group.title}</h2>
+        {items.length > 0 ? (
+          <div class="grid">
+            {items.map((material) => <StudyMaterialCard material={material} lang="en" />)}
+          </div>
+        ) : (
+          <p>No materials have been added yet.</p>
+        )}
+      </section>
+    );
+  })}
+
+  <style>
+    .group + .group {
+      margin-top: var(--space-xl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+  </style>
+</BaseLayout>

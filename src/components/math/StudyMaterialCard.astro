@@ -1,0 +1,53 @@
+---
+interface Material {
+  id: string;
+  sectionId: string;
+  kind: "theory" | "problems" | "exam";
+  titleRu: string;
+  titleEn: string;
+  descriptionRu: string;
+  descriptionEn: string;
+  pdf: string;
+  date: string;
+}
+
+interface Props {
+  material: Material;
+  lang: "ru" | "en";
+}
+
+const { material, lang } = Astro.props;
+const title = lang === "ru" ? material.titleRu : material.titleEn;
+const description = lang === "ru" ? material.descriptionRu : material.descriptionEn;
+---
+
+<article class="material-card">
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <p class="date">{new Date(material.date).toLocaleDateString(lang === "ru" ? "ru-RU" : "en-US")}</p>
+  <a href={material.pdf} target="_blank" rel="noreferrer">
+    {lang === "ru" ? "Открыть PDF" : "Open PDF"}
+  </a>
+</article>
+
+<style>
+  .material-card {
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  p {
+    color: var(--color-muted);
+  }
+
+  .date {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+</style>

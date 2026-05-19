@@ -1,0 +1,133 @@
+---
+interface Book {
+  id: string;
+  title: string;
+  author: string;
+  status: "read" | "reading" | "planned" | "paused" | "reference";
+  areaRu: string;
+  areaEn: string;
+  level: "basic" | "intermediate" | "advanced";
+  language: "ru" | "en" | "other";
+  commentRu: string;
+  commentEn: string;
+}
+
+interface Props {
+  book: Book;
+  lang: "ru" | "en";
+}
+
+const { book, lang } = Astro.props;
+
+const statusLabels = {
+  ru: {
+    read: "прочитал",
+    reading: "читаю",
+    planned: "планирую",
+    paused: "отложил",
+    reference: "справочник",
+  },
+  en: {
+    read: "read",
+    reading: "reading",
+    planned: "planned",
+    paused: "paused",
+    reference: "reference",
+  },
+};
+
+const levelLabels = {
+  ru: {
+    basic: "базовый",
+    intermediate: "средний",
+    advanced: "продвинутый",
+  },
+  en: {
+    basic: "basic",
+    intermediate: "intermediate",
+    advanced: "advanced",
+  },
+};
+
+const area = lang === "ru" ? book.areaRu : book.areaEn;
+const comment = lang === "ru" ? book.commentRu : book.commentEn;
+---
+
+<article class="book-card">
+  <div class="top">
+    <h3>{book.title}</h3>
+    <span>{statusLabels[lang][book.status]}</span>
+  </div>
+
+  <p class="author">{book.author}</p>
+
+  <dl>
+    <div>
+      <dt>{lang === "ru" ? "Область" : "Area"}</dt>
+      <dd>{area}</dd>
+    </div>
+
+    <div>
+      <dt>{lang === "ru" ? "Уровень" : "Level"}</dt>
+      <dd>{levelLabels[lang][book.level]}</dd>
+    </div>
+
+    <div>
+      <dt>{lang === "ru" ? "Язык" : "Language"}</dt>
+      <dd>{book.language.toUpperCase()}</dd>
+    </div>
+  </dl>
+
+  <p>{comment}</p>
+</article>
+
+<style>
+  .book-card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    align-items: baseline;
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  .top span {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .author {
+    margin-top: 0.25rem;
+    color: var(--color-muted);
+  }
+
+  dl {
+    display: grid;
+    gap: 0.35rem;
+    margin: var(--space-md) 0;
+  }
+
+  dl div {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  dt {
+    color: var(--color-muted);
+  }
+
+  dd {
+    margin: 0;
+  }
+</style>

@@ -18,103 +18,95 @@ if (!isAdmin) {
   </head>
 
   <body>
-    <main class="admin-shell">
-      <header>
-        <p class="logo">&lt;(.____.)&gt;</p>
-        <h1>Админка</h1>
-        <p class="muted">
-          Сейчас админка работает только с PDF-листочками НМУ. Остальное не
-          трогаем, чтобы не превратить интерфейс в панель управления атомной
-          станцией.
-        </p>
-      </header>
+    <main class="admin">
+      <h1>Админка</h1>
+
+      <p>
+        Центральная панель управления сайтом. Сейчас активно настраиваем модуль математики.
+      </p>
 
       <section class="grid">
-        <a class="card" href="/admin/ium/new-sheet/">
-          <h2>Добавить PDF-листочек</h2>
-          <p>Создать новый листочек НМУ, загрузить PDF условия и PDF решения.</p>
+        <a class="card active" href="/admin/math/">
+          <h2>Математика</h2>
+          <p>НМУ, книги и учебные материалы.</p>
         </a>
 
-        <a class="card" href="/admin/ium/edit-sheet/">
-          <h2>Редактировать листочки</h2>
-          <p>Изменить метаданные, статус, темы или заменить PDF-файлы.</p>
-        </a>
+        <div class="card disabled">
+          <h2>Программирование</h2>
+          <p>Будущий модуль для C++, CS и алгоритмов.</p>
+        </div>
+
+        <div class="card disabled">
+          <h2>Игра</h2>
+          <p>Будущий модуль для devlog, персонажей, карт и баланса.</p>
+        </div>
+
+        <div class="card disabled">
+          <h2>Блог</h2>
+          <p>Будущий модуль для статей и заметок.</p>
+        </div>
       </section>
 
-      <form method="post" action="/api/admin/logout" class="logout-form">
+      <form method="post" action="/api/admin/logout">
         <button type="submit">Выйти</button>
       </form>
     </main>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f4ed;
+        color: #181612;
+      }
+
+      .admin {
+        width: min(100% - 2rem, 960px);
+        margin: 3rem auto;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+      }
+
+      .card {
+        display: block;
+        padding: 1rem;
+        border: 1px solid #cfc3b0;
+        border-radius: 12px;
+        background: #fffaf0;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .active:hover {
+        border-color: #2f5d50;
+      }
+
+      .disabled {
+        opacity: 0.55;
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.15rem;
+      }
+
+      .card p {
+        margin-bottom: 0;
+        color: #6f6a5f;
+      }
+
+      button {
+        padding: 0.5rem 0.85rem;
+        border: 1px solid #cfc3b0;
+        border-radius: 6px;
+        background: #ebe1d0;
+        cursor: pointer;
+      }
+    </style>
   </body>
 </html>
-
-<style>
-  :root {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f7f4ed;
-    color: #181612;
-  }
-
-  body {
-    margin: 0;
-  }
-
-  .admin-shell {
-    width: min(100% - 2rem, 960px);
-    margin: 0 auto;
-    padding: 2rem 0;
-  }
-
-  .logo {
-    font-family: monospace;
-    font-weight: 700;
-  }
-
-  .muted {
-    color: #6f6a5f;
-    max-width: 70ch;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .card {
-    display: block;
-    padding: 1.25rem;
-    border: 1px solid #cfc3b0;
-    border-radius: 14px;
-    background: #fffaf0;
-    color: inherit;
-    text-decoration: none;
-    transition:
-      transform 160ms ease,
-      background-color 160ms ease,
-      border-color 160ms ease;
-  }
-
-  .card:hover {
-    transform: translateY(2px);
-    background: #f3eadb;
-    border-color: #2f5d50;
-  }
-
-  .card h2 {
-    margin-top: 0;
-  }
-
-  .logout-form {
-    margin-top: 2rem;
-  }
-
-  button {
-    padding: 0.55rem 0.85rem;
-    border: 1px solid #cfc3b0;
-    border-radius: 4px;
-    background: #fffaf0;
-    cursor: pointer;
-  }
-</style>

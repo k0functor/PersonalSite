@@ -1,4 +1,104 @@
 ---
 export const prerender = false;
-return Astro.redirect("/admin/ium/new-sheet/");
+
+import { isAdminRequest } from "../../lib/admin/auth";
+
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
 ---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Создание материалов — &lt;(.____.)&gt;</title>
+  </head>
+
+  <body>
+    <main class="admin">
+      <p><a href="/admin/">← В админку</a></p>
+
+      <h1>Создание материалов</h1>
+
+      <p class="muted">
+        Сейчас доступно только создание PDF-листочков НМУ. Остальные типы контента
+        будут добавлены позже отдельными модулями, а не через один мутный универсальный
+        экран, потому что мы уже почти стали цивилизованными.
+      </p>
+
+      <section class="grid">
+        <a class="card" href="/admin/ium/new-sheet/">
+          <h2>Добавить PDF-листочек НМУ</h2>
+          <p>Условие, решение, статус, темы и привязка к разделу.</p>
+        </a>
+
+        <a class="card" href="/admin/ium/new-section/">
+          <h2>Добавить раздел НМУ</h2>
+          <p>Матанализ, алгебра, геометрия, топология и другие разделы.</p>
+        </a>
+      </section>
+    </main>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f7f4ed;
+        color: #181612;
+      }
+
+      .admin {
+        width: min(100% - 2rem, 860px);
+        margin: 2.5rem auto;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .muted {
+        color: #6f6a5f;
+        max-width: 70ch;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .card {
+        display: block;
+        padding: 1rem;
+        border: 1px solid #cfc3b0;
+        border-radius: 12px;
+        background: #fffaf0;
+        color: inherit;
+        text-decoration: none;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background-color 160ms ease;
+      }
+
+      .card:hover {
+        transform: translateY(2px);
+        border-color: #2f5d50;
+        background: #fff4df;
+      }
+
+      .card h2 {
+        margin-top: 0;
+      }
+
+      .card p {
+        margin-bottom: 0;
+        color: #6f6a5f;
+      }
+    </style>
+  </body>
+</html>

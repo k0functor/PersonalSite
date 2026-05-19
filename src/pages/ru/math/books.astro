@@ -1,56 +1,32 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PageHeader from "../../../components/PageHeader.astro";
-import BookCard from "../../../components/BookCard.astro";
-import { mathBooks } from "../../../data/mathBooks";
+import MathBookCard from "../../../components/math/MathBookCard.astro";
+import books from "../../../data/math/books.json";
 
 const logo = "<(.____.)>";
-
-const reading = mathBooks.filter((book) => book.status === "reading");
-const planned = mathBooks.filter((book) => book.status === "planned");
-const read = mathBooks.filter((book) => book.status === "read");
+const sortedBooks = [...books].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
 ---
 
 <BaseLayout
   title={`Книги по математике — ${logo}`}
-  description="Книги по математике, которые я прочитал, читаю или планирую прочитать."
+  description="Книги, которые я прочитал, читаю или планирую прочитать."
   lang="ru"
 >
   <PageHeader
-    title="Книги по математике"
-    description="Список книг, которые я прочитал, читаю или планирую прочитать."
+    title="Книги"
+    description="Книги, которые я прочитал, читаю или планирую прочитать."
   />
 
-  <section>
-    <h2>Читаю</h2>
-    <div class="grid">
-      {reading.map((book) => <BookCard book={book} />)}
-    </div>
-  </section>
-
-  <section>
-    <h2>Планирую</h2>
-    <div class="grid">
-      {planned.map((book) => <BookCard book={book} />)}
-    </div>
-  </section>
-
-  <section>
-    <h2>Прочитал</h2>
-    {read.length > 0 ? (
-      <div class="grid">
-        {read.map((book) => <BookCard book={book} />)}
-      </div>
-    ) : (
-      <p>Пока список пуст. Как трагично, но поправимо.</p>
-    )}
-  </section>
+  {sortedBooks.length > 0 ? (
+    <section class="grid">
+      {sortedBooks.map((book) => <MathBookCard book={book} lang="ru" />)}
+    </section>
+  ) : (
+    <p>Книги пока не добавлены.</p>
+  )}
 
   <style>
-    section + section {
-      margin-top: var(--space-xl);
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

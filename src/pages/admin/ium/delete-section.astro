@@ -1,0 +1,149 @@
+---
+export const prerender = false;
+
+import { isAdminRequest } from "../../../lib/admin/auth";
+import sections from "../../../data/ium/sections.json";
+import sheets from "../../../data/ium/sheets.json";
+
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
+
+const error = Astro.url.searchParams.get("error");
+const success = Astro.url.searchParams.get("success");
+const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+
+function countSheets(sectionId: string) {
+  return sheets.filter((sheet) => sheet.sectionId === sectionId).length;
+}
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Удалить раздел НМУ</title>
+  </head>
+
+  <body>
+    <main class="page">
+      <p><a href="/admin/ium/">← НМУ</a></p>
+
+      <h1>Удалить раздел НМУ</h1>
+      <p>Удалять можно только пустые разделы. Раздел с листочками сначала надо очистить вручную. Да, защита от самоуничтожения, какая неожиданная роскошь.</p>
+
+      {success === "deleted" && <p class="success">Раздел удалён. Сделай git pull локально, если проверяешь сайт на компьютере.</p>}
+      {error === "not-found" && <p class="error">Раздел не найден.</p>}
+      {error === "has-sheets" && <p class="error">Нельзя удалить раздел, в котором есть листочки.</p>}
+      {error === "server" && <p class="error">Ошибка сервера. Смотри терминал npm run dev.</p>}
+
+      <section class="list">
+        {sortedSections.map((section) => {
+          const sheetCount = countSheets(section.id);
+          return (
+            <article class="card">
+              <div>
+                <h2>{section.title}</h2>
+                <p>{section.description}</p>
+                <p class="muted">ID: {section.id} / листочков: {sheetCount}</p>
+              </div>
+
+              <form method="post" action="/api/admin/ium/delete-section">
+                <input type="hidden" name="id" value={section.id} />
+                <button type="submit" disabled={sheetCount > 0} onclick="return confirm('Удалить раздел?')">
+                  Удалить
+                </button>
+              </form>
+            </article>
+          );
+        })}
+      </section>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #181612;
+    background: #f7f4ed;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .page {
+    width: min(100% - 2rem, 860px);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #cfc3b0;
+    border-radius: 12px;
+    background: #fffaf0;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  .muted {
+    color: #6f6a5f;
+  }
+
+  button {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid #cfc3b0;
+    border-radius: 4px;
+    background: #ebe1d0;
+    cursor: pointer;
+  }
+
+  button:hover:not(:disabled) {
+    background: #f3eadb;
+  }
+
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .error,
+  .success {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .error {
+    border: 1px solid #b00020;
+    color: #b00020;
+    background: #fff0f2;
+  }
+
+  .success {
+    border: 1px solid #2f5d50;
+    color: #2f5d50;
+    background: #eef7f3;
+  }
+
+  @media (max-width: 700px) {
+    .card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,113 @@
+---
+export const prerender = false;
+
+import { isAdminRequest } from "../../../../lib/admin/auth";
+
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Добавить книгу — Админка</title>
+  </head>
+
+  <body>
+    <main class="admin">
+      <p><a href="/admin/math/">← Математика</a></p>
+      <h1>Добавить книгу</h1>
+
+      {error && <p class="error">Ошибка: {error}</p>}
+
+      <form method="post" action="/api/admin/math/create-book">
+        <label>
+          ID / slug
+          <input name="id" required placeholder="zorich-analysis-1" />
+        </label>
+
+        <label>
+          Название
+          <input name="title" required />
+        </label>
+
+        <label>
+          Автор
+          <input name="author" required />
+        </label>
+
+        <label>
+          Статус
+          <select name="status" required>
+            <option value="reading">читаю</option>
+            <option value="read">прочитал</option>
+            <option value="planned">планирую</option>
+            <option value="paused">отложил</option>
+            <option value="reference">справочник</option>
+          </select>
+        </label>
+
+        <label>
+          Область RU
+          <input name="areaRu" required placeholder="анализ" />
+        </label>
+
+        <label>
+          Area EN
+          <input name="areaEn" required placeholder="analysis" />
+        </label>
+
+        <label>
+          Уровень
+          <select name="level" required>
+            <option value="basic">basic</option>
+            <option value="intermediate">intermediate</option>
+            <option value="advanced">advanced</option>
+          </select>
+        </label>
+
+        <label>
+          Язык книги
+          <select name="language" required>
+            <option value="ru">RU</option>
+            <option value="en">EN</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label>
+          Комментарий RU
+          <textarea name="commentRu" rows="4" required></textarea>
+        </label>
+
+        <label>
+          Comment EN
+          <textarea name="commentEn" rows="4" required></textarea>
+        </label>
+
+        <label>
+          Порядок сортировки
+          <input name="order" type="number" value="100" />
+        </label>
+
+        <button type="submit">Добавить книгу</button>
+      </form>
+    </main>
+
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #f7f4ed; color: #181612; }
+      .admin { width: min(100% - 2rem, 760px); margin: 3rem auto; }
+      form { display: grid; gap: 1rem; }
+      label { display: grid; gap: .35rem; }
+      input, textarea, select { padding: .55rem; border: 1px solid #cfc3b0; border-radius: 6px; background: #fffaf0; font: inherit; }
+      button { padding: .65rem .9rem; border: 1px solid #cfc3b0; border-radius: 6px; background: #ebe1d0; cursor: pointer; }
+      .error { padding: .75rem; border: 1px solid #b00020; border-radius: 8px; color: #b00020; background: #fff0f2; }
+    </style>
+  </body>
+</html>

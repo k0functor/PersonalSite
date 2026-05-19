@@ -1,0 +1,28 @@
+[
+  {
+    "id": "zorich-analysis-1",
+    "title": "Математический анализ I",
+    "author": "В. А. Зорич",
+    "status": "reading",
+    "areaRu": "анализ",
+    "areaEn": "analysis",
+    "level": "basic",
+    "language": "ru",
+    "commentRu": "Основной источник для строгого университетского анализа.",
+    "commentEn": "My main source for rigorous university-level analysis.",
+    "order": 1
+  },
+  {
+    "id": "hatcher-algebraic-topology",
+    "title": "Algebraic Topology",
+    "author": "Allen Hatcher",
+    "status": "planned",
+    "areaRu": "алгебраическая топология",
+    "areaEn": "algebraic topology",
+    "level": "advanced",
+    "language": "en",
+    "commentRu": "Ключевая книга для будущего входа в алгебраическую топологию.",
+    "commentEn": "A key book for entering algebraic topology properly.",
+    "order": 2
+  }
+]
