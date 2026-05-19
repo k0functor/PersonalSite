@@ -1,12 +1,29 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
+import node from "@astrojs/node";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
-import node from "@astrojs/node";
-
 export default defineConfig({
+  site: "https://www.k0functor.com",
+
+  output: "server",
+
+  security: {
+    checkOrigin: false,
+  },
+
+  adapter: node({
+    mode: "standalone",
+  }),
+
+  server: {
+    host: true,
+    port: Number(process.env.PORT) || 4321,
+  },
+
   markdown: {
+    syntaxHighlight: "shiki",
     remarkPlugins: [remarkMath],
     rehypePlugins: [rehypeKatex],
   },
@@ -17,8 +34,4 @@ export default defineConfig({
       rehypePlugins: [rehypeKatex],
     }),
   ],
-
-  adapter: node({
-    mode: "standalone",
-  }),
 });
