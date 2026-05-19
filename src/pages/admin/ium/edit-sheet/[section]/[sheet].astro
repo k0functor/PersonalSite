@@ -1,107 +1,241 @@
 ---
 export const prerender = false;
 
-import { requireAdmin } from "../../../../../lib/admin/auth";
-import { getSheet, getSortedIumSections } from "../../../../../lib/ium/catalog";
-import { statusLabels } from "../../../../../lib/ium/types";
+import { isAdminRequest } from "../../../../../lib/admin/auth";
+import sections from "../../../../../data/ium/sections.json";
+import sheets from "../../../../../data/ium/sheets.json";
 
-const redirect = await requireAdmin(Astro.cookies);
-if (redirect) return redirect;
+const isAdmin = await isAdminRequest(Astro.cookies);
+
+if (!isAdmin) {
+  return Astro.redirect("/admin/login");
+}
 
 const { section: sectionId, sheet: sheetId } = Astro.params;
-const sheet = sectionId && sheetId ? getSheet(sectionId, sheetId) : undefined;
-const sections = getSortedIumSections();
-const error = Astro.url.searchParams.get("error");
+
+const sheet = sheets.find(
+  (item) => item.sectionId === sectionId && item.id === sheetId
+);
 
 if (!sheet) {
   return Astro.redirect("/admin/ium/edit-sheet/");
 }
+
+const statuses = [
+  { value: "not-started", label: "не начат" },
+  { value: "in-progress", label: "в процессе" },
+  { value: "partly-solved", label: "решён частично" },
+  { value: "solved", label: "решён" },
+  { value: "submitted", label: "сдан" },
+  { value: "needs-rewrite", label: "нужно переписать" },
+];
+
+const topicsValue = Array.isArray(sheet.topics) ? sheet.topics.join(", ") : "";
 ---
 
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>Редактировать {sheet.title} — &lt;(.____.)&gt;</title>
+    <title>Редактировать листочек — &lt;(.____.)&gt;</title>
   </head>
 
   <body>
-    <main>
+    <main class="admin-shell">
       <p><a href="/admin/ium/edit-sheet/">← Все листочки</a></p>
 
-      <h1>Редактировать листочек</h1>
+      <header>
+        <p class="logo">&lt;(.____.)&gt;</p>
+        <h1>Редактировать листочек</h1>
+        <p class="muted">
+          Если не выбрать новый PDF, старый файл останется на месте. Наконец-то
+          поведение, которое не пытается испортить день.
+        </p>
+      </header>
 
-      {error && <p class="error">Ошибка: {error}</p>}
-
-      <form method="post" action="/api/admin/ium/update-sheet" enctype="multipart/form-data">
-        <input type="hidden" name="sectionId" value={sheet.sectionId} />
-        <input type="hidden" name="id" value={sheet.id} />
+      <form method="post" action="/api/admin/ium/update-sheet" enctype="multipart/form-data" class="form">
+        <input type="hidden" name="originalSectionId" value={sheet.sectionId} />
+        <input type="hidden" name="originalSheetId" value={sheet.id} />
+        <input type="hidden" name="currentSheetPdf" value={sheet.sheetPdf ?? ""} />
+        <input type="hidden" name="currentSolutionPdf" value={sheet.solutionPdf ?? ""} />
 
         <label>
           Раздел
-          <select disabled>
+          <select name="sectionId" required>
             {sections.map((section) => (
-              <option value={section.id} selected={section.id === sheet.sectionId}>{section.title}</option>
+              <option value={section.id} selected={section.id === sheet.sectionId}>
+                {section.title}
+              </option>
             ))}
           </select>
-          <small>Раздел и slug листочка пока не меняем, чтобы не ломать URL и PDF-пути.</small>
+        </label>
+
+        <label>
+          Slug / id листочка
+          <input name="sheetId" value={sheet.id} required pattern="[a-z0-9-]+" />
+          <small>Например: sheet-01. Только латиница, цифры и дефисы.</small>
         </label>
 
         <label>
           Название
-          <input name="title" required value={sheet.title} />
+          <input name="title" value={sheet.title} required />
         </label>
 
         <label>
           Описание
-          <textarea name="description" required rows="3">{sheet.description}</textarea>
+          <textarea name="description" rows="3" required>{sheet.description}</textarea>
         </label>
 
         <label>
-          Темы через запятую
-          <input name="topics" value={sheet.topics.join(", ")} />
+          Темы
+          <input name="topics" value={topicsValue} />
+          <small>Через запятую: пределы, непрерывность, производные</small>
         </label>
 
         <label>
           Статус
           <select name="status" required>
-            {Object.entries(statusLabels).map(([value, label]) => (
-              <option value={value} selected={value === sheet.status}>{label}</option>
+            {statuses.map((status) => (
+              <option value={status.value} selected={status.value === sheet.status}>
+                {status.label}
+              </option>
             ))}
           </select>
         </label>
 
         <label>
           Дата
-          <input name="date" type="date" required value={sheet.date} />
+          <input type="date" name="date" value={sheet.date} required />
         </label>
+
+        <section class="current-files">
+          <h2>Текущие файлы</h2>
+
+          <p>
+            Условие:
+            {sheet.sheetPdf ? <a href={sheet.sheetPdf} target="_blank">открыть PDF</a> : "не добавлено"}
+          </p>
+
+          <p>
+            Решение:
+            {sheet.solutionPdf ? <a href={sheet.solutionPdf} target="_blank">открыть PDF</a> : "не добавлено"}
+          </p>
+        </section>
 
         <label>
           Заменить PDF условия
-          <input name="sheetPdf" type="file" accept="application/pdf,.pdf" />
-          <small>Оставь пустым, если не нужно заменять файл.</small>
+          <input type="file" name="sheetPdf" accept="application/pdf" />
         </label>
 
         <label>
           Заменить PDF решения
-          <input name="solutionPdf" type="file" accept="application/pdf,.pdf" />
-          <small>Оставь пустым, если не нужно заменять файл.</small>
+          <input type="file" name="solutionPdf" accept="application/pdf" />
+        </label>
+
+        <label class="checkbox">
+          <input type="checkbox" name="removeSolutionPdf" value="yes" />
+          Убрать PDF решения
         </label>
 
         <button type="submit">Сохранить изменения</button>
       </form>
     </main>
-
-    <style>
-      body { margin: 0; font-family: system-ui, sans-serif; background: #f7f4ed; color: #181612; }
-      main { width: min(100% - 2rem, 760px); margin: 3rem auto; }
-      form { display: grid; gap: 1rem; }
-      label { display: grid; gap: 0.35rem; }
-      input, textarea, button, select { font: inherit; }
-      input, textarea, select { padding: 0.7rem; border: 1px solid #cfc3b0; border-radius: 8px; background: #fffaf0; }
-      button { width: fit-content; padding: 0.7rem 1rem; border: 1px solid #cfc3b0; border-radius: 4px; background: #ebe1d0; cursor: pointer; }
-      small, .error { color: #6f6a5f; }
-      .error { padding: 0.75rem; border: 1px solid #8a3a1b; border-radius: 8px; color: #8a3a1b; background: #fff4ea; }
-    </style>
   </body>
 </html>
+
+<style>
+  :root {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f7f4ed;
+    color: #181612;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .admin-shell {
+    width: min(100% - 2rem, 760px);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+
+  .logo {
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .muted,
+  small {
+    color: #6f6a5f;
+  }
+
+  .form {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  label {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #cfc3b0;
+    border-radius: 6px;
+    background: #fffaf0;
+    color: #181612;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .current-files {
+    padding: 1rem;
+    border: 1px solid #cfc3b0;
+    border-radius: 12px;
+    background: #fffaf0;
+  }
+
+  .current-files h2 {
+    margin-top: 0;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  button {
+    width: fit-content;
+    padding: 0.65rem 0.95rem;
+    border: 1px solid #cfc3b0;
+    border-radius: 4px;
+    background: #fffaf0;
+    color: #181612;
+    cursor: pointer;
+    font: inherit;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+
+  button:hover {
+    transform: translateY(2px);
+    background: #f3eadb;
+    border-color: #2f5d50;
+  }
+</style>
