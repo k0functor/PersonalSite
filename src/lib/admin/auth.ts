@@ -91,3 +91,15 @@ export async function isAdminRequest(cookies: any) {
   const token = cookies.get(SESSION_COOKIE_NAME)?.value;
   return verifySessionToken(token);
 }
+
+export async function requireAdmin(cookies: any): Promise<Response | null> {
+  const isAdmin = await isAdminRequest(cookies);
+
+  if (!isAdmin) {
+    return new Response("Unauthorized", {
+      status: 401,
+    });
+  }
+
+  return null;
+}
