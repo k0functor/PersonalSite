@@ -6,9 +6,15 @@ import rehypeKatex from "rehype-katex";
 
 export default defineConfig({
   output: "server",
+
   adapter: node({
     mode: "standalone",
   }),
+
+  server: {
+    host: true,
+    port: Number(process.env.PORT) || 4321,
+  },
 
   markdown: {
     syntaxHighlight: "shiki",
