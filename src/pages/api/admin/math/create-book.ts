@@ -55,7 +55,7 @@ export async function POST({ request, cookies }: { request: Request; cookies: an
 
     await updateJsonFile(path, books, `Add math book: ${book.title}`);
 
-    return Response.redirect(new URL("/admin/math/", request.url), 303);
+    return Response.redirect(new URL("/admin/math/books/?success=book-added", request.url), 303);
   } catch (error) {
     console.error("create-book error", error);
     return Response.redirect(new URL("/admin/math/books/new/?error=server-error", request.url), 303);
