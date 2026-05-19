@@ -25,4 +25,17 @@
     "commentEn": "A key book for entering algebraic topology properly.",
     "order": 2
   }
+  {
+    "id": "atiyah-macdonald-commutative-algebra",
+    "title": "Введение в коммутативную алгебру",
+    "author": "М. Атья, И. Макдональд",
+    "status": "reading",
+    "areaRu": "коммутативная алгебра",
+    "areaEn": "commutative algebra",
+    "level": "intermediate",
+    "language": "ru",
+    "commentRu": "Книга по коммутативной алгебре, которая плавно знакомит с предметом, а задачи плавно знакомят с языком теории схем Гротендика.",
+    "commentEn": "A book on commutative algebra that introduces the subject smoothly, and the problems smoothly introduce the language of Grothendieck scheme theory.",
+    "order": 3
+  }
 ]
