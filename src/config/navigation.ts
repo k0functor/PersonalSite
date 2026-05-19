@@ -29,10 +29,6 @@ export const routes = [
     key: "shop",
     href: "shop",
   },
-  {
-    key: "roadmap",
-    href: "roadmap",
-  },
 ] as const;
 
 export function getLocalizedPath(lang: Lang, path = "") {

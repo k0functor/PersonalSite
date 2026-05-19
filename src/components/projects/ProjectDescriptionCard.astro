@@ -1,0 +1,91 @@
+---
+import {
+  getProjectDescription,
+  getProjectTitle,
+  getStatusLabel,
+  type ProjectItem,
+  type ProjectLang,
+} from "../../lib/projects/catalog";
+
+interface Project {
+  id: string;
+  titleRu: string;
+  titleEn: string;
+  descriptionRu: string;
+  descriptionEn: string;
+  status: "planned" | "in-progress" | "active" | "paused" | "archived";
+  order: number;
+}
+
+interface Props {
+  project: Project;
+  lang: "ru" | "en";
+}
+
+const { project, lang } = Astro.props;
+
+const statusLabels = {
+  ru: {
+    planned: "ЗАПЛАНИРОВАНО",
+    "in-progress": "В ПРОЦЕССЕ",
+    active: "АКТИВНО",
+    paused: "ПАУЗА",
+    archived: "АРХИВ",
+  },
+  en: {
+    planned: "PLANNED",
+    "in-progress": "IN PROGRESS",
+    active: "ACTIVE",
+    paused: "PAUSED",
+    archived: "ARCHIVED",
+  },
+};
+
+const title = lang === "ru" ? project.titleRu : project.titleEn;
+const description = lang === "ru" ? project.descriptionRu : project.descriptionEn;
+const statusLabel = statusLabels[lang][project.status];
+---
+
+<article class="project-card">
+  <h2>{title}</h2>
+
+  <span class="status">{statusLabel}</span>
+
+  <p>{description}</p>
+</article>
+
+<style>
+  .project-card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.25;
+  }
+
+  .status {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 0.45rem;
+    margin-bottom: var(--space-sm);
+    padding: 0.22rem 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-muted);
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: 0.035em;
+  }
+
+  p {
+    margin-bottom: 0;
+    color: var(--color-muted);
+  }
+</style>

@@ -1,81 +1,35 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import SectionCard from "../../components/SectionCard.astro";
 
 const logo = "<(.____.)>";
 ---
 
 <BaseLayout
   title={`Blog — ${logo}`}
-  description="Notes about learning, development, books, planning, and personal projects."
+  description="The blog section is in development."
   lang="en"
 >
   <PageHeader
     title="Blog"
-    description="Less formal notes: learning, development, books, planning, mistakes, and long-term goals."
+    description="IN DEVELOPMENT"
   />
 
-  <section class="intro">
-    <p>
-      Not everything fits neatly into “math”, “programming”, or “game
-      development”. Some thoughts live between them: how to study, how not to
-      abandon projects, how to choose resources, how to plan a year, and what
-      happens when a plan meets reality and loses.
-    </p>
-
-    <p>
-      This section is about the process, not only the results.
-    </p>
-  </section>
-
-  <section class="grid">
-    <SectionCard
-      title="Learning"
-      description="Learning process, materials, problems, and trying not to turn planning into a replacement for work."
-      href="/en/blog/learning/"
-    />
-
-    <SectionCard
-      title="Development"
-      description="Observations about programming, tools, projects, mistakes, and technical decisions."
-      href="/en/blog/development/"
-    />
-
-    <SectionCard
-      title="Books and Resources"
-      description="Books, courses, articles, lectures, and materials that turned out to be useful."
-      href="/en/blog/resources/"
-    />
-
-    <SectionCard
-      title="Planning"
-      description="Roadmaps, monthly reviews, weekly plans, and adjustments."
-      href="/en/blog/planning/"
-    />
-  </section>
-
-  <section>
-    <h2>Planned materials</h2>
-
-    <ul>
-      <li>Why I am building a personal website</li>
-      <li>My summer plan for C++ and the website</li>
-      <li>How I want to document my learning in public</li>
-      <li>What makes a good devlog</li>
-      <li>Why long-term projects need systems</li>
-    </ul>
+  <section class="placeholder">
+    <p>This section is currently in development.</p>
   </section>
 
   <style>
-    .intro {
-      margin-bottom: var(--space-xl);
+    .placeholder {
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: var(--space-md);
+    .placeholder p {
+      margin: 0;
+      color: var(--color-muted);
     }
   </style>
 </BaseLayout>

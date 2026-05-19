@@ -1,96 +1,35 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import SectionCard from "../../components/SectionCard.astro";
 
 const logo = "<(.____.)>";
 ---
 
 <BaseLayout
   title={`Game — ${logo}`}
-  description="A devlog for a game inspired by Slay the Spire and Darkest Dungeon."
+  description="The game section is in development."
   lang="en"
 >
   <PageHeader
     title="Game"
-    description="Mechanics, characters, cards, artifacts, balance, prototypes, and devlog."
+    description="IN DEVELOPMENT"
   />
 
-  <section class="intro">
-    <p>
-      I am developing a game inspired by Slay the Spire and Darkest Dungeon. I am
-      interested in combining card-based tactics, party structure, risk
-      management, long-term consequences, and expressive characters.
-    </p>
-
-    <p>
-      The project is still in an early stage. This section will contain notes
-      about design, technical decisions, balance, prototypes, and mistakes,
-      because game development apparently refuses to work without them.
-    </p>
-  </section>
-
-  <section class="grid">
-    <SectionCard
-      title="Concept"
-      description="Genre, mood, core loop, inspirations, and what makes the project different from similar games."
-      href="/en/game/concept/"
-    />
-
-    <SectionCard
-      title="Combat System"
-      description="Combat rules, cards, character actions, enemies, statuses, resources, and battle tempo."
-      href="/en/game/combat/"
-    />
-
-    <SectionCard
-      title="Characters"
-      description="Classes, roles, starter decks, synergies, strengths, weaknesses, and character pairs."
-      href="/en/game/characters/"
-    />
-
-    <SectionCard
-      title="Cards"
-      description="Attacks, skills, reactions, special effects, rarities, upgrades, and interactions."
-      href="/en/game/cards/"
-    />
-
-    <SectionCard
-      title="Artifacts"
-      description="Passive effects, strategic modifiers, rare finds, and ways to change the style of a run."
-      href="/en/game/artifacts/"
-    />
-
-    <SectionCard
-      title="Balance"
-      description="Numbers, tables, heuristics, testing, and attempts not to create a broken pain machine."
-      href="/en/game/balance/"
-    />
-  </section>
-
-  <section>
-    <h2>Planned materials</h2>
-
-    <ul>
-      <li>The idea of my game</li>
-      <li>What I take from Slay the Spire</li>
-      <li>What I take from Darkest Dungeon</li>
-      <li>The first version of the combat system</li>
-      <li>How I design characters</li>
-      <li>Starter character pair balance</li>
-      <li>Why the first prototype will be simple</li>
-    </ul>
+  <section class="placeholder">
+    <p>This section is currently in development.</p>
   </section>
 
   <style>
-    .intro {
-      margin-bottom: var(--space-xl);
+    .placeholder {
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: var(--space-md);
+    .placeholder p {
+      margin: 0;
+      color: var(--color-muted);
     }
   </style>
 </BaseLayout>

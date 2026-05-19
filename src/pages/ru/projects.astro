@@ -1,62 +1,25 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import ProjectCard from "../../components/ProjectCard.astro";
+import ProjectDescriptionCard from "../../components/projects/ProjectDescriptionCard.astro";
+import { getProjects } from "../../lib/projects/catalog";
 
 const logo = "<(.____.)>";
+const projects = getProjects();
 ---
 
 <BaseLayout
   title={`Проекты — ${logo}`}
-  description="Активные и запланированные проекты: сайт, игра, заметки, медиа и учебные эксперименты."
+  description="Описание текущих и запланированных проектов."
   lang="ru"
 >
   <PageHeader
     title="Проекты"
-    description="Активные и запланированные проекты. Некоторые уже существуют, некоторые пока делают вид, что терпеливо ждут своей очереди."
+    description="Краткое описание текущих и запланированных направлений."
   />
 
   <section class="grid">
-    <ProjectCard
-      title="Личный сайт"
-      description="Двуязычный сайт о математике, программировании, разработке игры и долгосрочном обучении."
-      status="active"
-      href="/ru/"
-    />
-
-    <ProjectCard
-      title="C++ RPG Prototype"
-      description="Прототип игры на стыке Slay the Spire и Darkest Dungeon. Главные фокусы: боевая система, персонажи, карты, артефакты и баланс."
-      status="active"
-      href="/ru/game/"
-    />
-
-    <ProjectCard
-      title="Math Notes"
-      description="Система математических заметок, задач, конспектов и карт тем."
-      status="planned"
-      href="/ru/math/"
-    />
-
-    <ProjectCard
-      title="Programming Notes"
-      description="Заметки по C++, STL, алгоритмам, Computer Science и инженерной практике."
-      status="planned"
-      href="/ru/programming/"
-    />
-
-    <ProjectCard
-      title="Media"
-      description="Будущие YouTube/devlog/Telegram-материалы для поиска единомышленников и небольшой монетизации."
-      status="planned"
-    />
-
-    <ProjectCard
-      title="Merch"
-      description="Будущая торговая секция сайта со стикерами, футболками, кружками, постерами и цифровыми материалами."
-      status="planned"
-      href="/ru/shop/"
-    />
+    {projects.map((project) => <ProjectDescriptionCard project={project} lang="ru" />)}
   </section>
 
   <style>

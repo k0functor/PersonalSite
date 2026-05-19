@@ -1,82 +1,35 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHeader from "../../components/PageHeader.astro";
-import SectionCard from "../../components/SectionCard.astro";
 
 const logo = "<(.____.)>";
 ---
 
 <BaseLayout
   title={`Блог — ${logo}`}
-  description="Заметки об обучении, разработке, книгах, планировании и личных проектах."
+  description="Раздел блога находится в разработке."
   lang="ru"
 >
   <PageHeader
     title="Блог"
-    description="Менее формальные заметки: обучение, разработка, книги, планирование, ошибки и долгосрочные цели."
+    description="В РАЗРАБОТКЕ"
   />
 
-  <section class="intro">
-    <p>
-      Не всё хорошо помещается в строгие разделы “математика”,
-      “программирование” или “игра”. Некоторые мысли лежат между ними:
-      как учиться, как не бросать проекты, как выбирать источники, как
-      планировать год и что делать, когда план снова встретился с реальностью.
-    </p>
-
-    <p>
-      Здесь будут появляться тексты о процессе: не только о результатах, но и о
-      том, как они появляются.
-    </p>
-  </section>
-
-  <section class="grid">
-    <SectionCard
-      title="Обучение"
-      description="Учебный процесс, материалы, задачи и попытка не превратить планирование в замену работе."
-      href="/ru/blog/learning/"
-    />
-
-    <SectionCard
-      title="Разработка"
-      description="Наблюдения о программировании, инструментах, проектах, ошибках и технических решениях."
-      href="/ru/blog/development/"
-    />
-
-    <SectionCard
-      title="Книги и источники"
-      description="Книги, курсы, статьи, лекции и материалы, которые оказались полезны."
-      href="/ru/blog/resources/"
-    />
-
-    <SectionCard
-      title="Планирование"
-      description="Дорожные карты, месячные итоги, недельные планы и корректировки."
-      href="/ru/blog/planning/"
-    />
-  </section>
-
-  <section>
-    <h2>Планируемые материалы</h2>
-
-    <ul>
-      <li>Почему я делаю личный сайт</li>
-      <li>Мой летний план по C++ и сайту</li>
-      <li>Как я хочу вести публичный учебный путь</li>
-      <li>Что должно быть в хорошем devlog</li>
-      <li>Почему долгосрочные проекты требуют системы</li>
-    </ul>
+  <section class="placeholder">
+    <p>Этот раздел пока находится в разработке.</p>
   </section>
 
   <style>
-    .intro {
-      margin-bottom: var(--space-xl);
+    .placeholder {
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: var(--space-md);
+    .placeholder p {
+      margin: 0;
+      color: var(--color-muted);
     }
   </style>
 </BaseLayout>

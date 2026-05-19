@@ -1,0 +1,47 @@
+[
+  {
+    "id": "personal-site",
+    "titleRu": "Личный сайт",
+    "titleEn": "Personal Website",
+    "descriptionRu": "Двуязычный сайт о математике, программировании, проектах и долгосрочном обучении.",
+    "descriptionEn": "A bilingual website about mathematics, programming, projects, and long-term learning.",
+    "status": "in-progress",
+    "order": 1
+  },
+  {
+    "id": "math",
+    "titleRu": "Математика",
+    "titleEn": "Mathematics",
+    "descriptionRu": "Раздел с НМУ, книгами и учебными материалами по математике.",
+    "descriptionEn": "A section with IUM materials, books, and mathematical study resources.",
+    "status": "in-progress",
+    "order": 2
+  },
+  {
+    "id": "programming",
+    "titleRu": "Программирование",
+    "titleEn": "Programming",
+    "descriptionRu": "Материалы по C++, Python, алгоритмам и структурам данных.",
+    "descriptionEn": "Materials about C++, Python, algorithms, and data structures.",
+    "status": "in-progress",
+    "order": 3
+  },
+  {
+    "id": "game",
+    "titleRu": "Игра",
+    "titleEn": "Game",
+    "descriptionRu": "Будущий раздел о разработке игры. Сейчас находится в разработке.",
+    "descriptionEn": "A future section about game development. Currently in development.",
+    "status": "planned",
+    "order": 4
+  },
+  {
+    "id": "merch",
+    "titleRu": "Мерч",
+    "titleEn": "Merch",
+    "descriptionRu": "Будущая торговая секция сайта.",
+    "descriptionEn": "A future shop section for the website.",
+    "status": "planned",
+    "order": 5
+  }
+]
