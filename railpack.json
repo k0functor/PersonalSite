@@ -10,6 +10,6 @@
     }
   },
   "deploy": {
-    "startCommand": "node ./dist/server/entry.mjs"
+    "startCommand": "npm run start"
   }
 }
