@@ -1,10 +1,29 @@
 [
   {
     "id": "sheet-01",
+    "sectionId": "algebra-1",
+    "title": "Листок 1",
+    "description": "Первые задачи по теме",
+    "topics": [
+      "группы",
+      "кольца",
+      "поля"
+    ],
+    "status": "in-progress",
+    "sheetPdf": "/files/ium/algebra-1/sheet-01.pdf",
+    "solutionPdf": "/files/ium/algebra-1/sheet-01-solution.pdf",
+    "date": "2026-05-19",
+    "updatedAt": "2026-05-19"
+  },
+  {
+    "id": "sheet-01",
     "sectionId": "calculus-1",
     "title": "Листок 1",
     "description": "Тестовый листочек для проверки PDF-каталога.",
-    "topics": ["пределы", "непрерывность"],
+    "topics": [
+      "пределы",
+      "непрерывность"
+    ],
     "status": "in-progress",
     "sheetPdf": "/files/ium/calculus-1/sheet-01.pdf",
     "solutionPdf": "",
