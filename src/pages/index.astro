@@ -1,23 +1,5 @@
 ---
-const title = "<(.____.)>"
+export const prerender = false;
+
+return Astro.redirect("/ru/");
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>{title}</title>
-	</head>
-	<body>
-		<main>
-			<h1>&lt;(.____.)&gt;</h1>
-			<p>A personal website about math, programming and game development.</p>
-
-			<nav>
-				<a href="/ru/">Русский</a>
-				<span> · </span>
-				<a href="/en/">English</a>
-			</nav>
-		</main>
-	</body>
-</html>

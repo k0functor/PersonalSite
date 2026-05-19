@@ -3,6 +3,8 @@ import mdx from "@astrojs/mdx";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 
+import node from "@astrojs/node";
+
 export default defineConfig({
   markdown: {
     remarkPlugins: [remarkMath],
@@ -15,4 +17,8 @@ export default defineConfig({
       rehypePlugins: [rehypeKatex],
     }),
   ],
+
+  adapter: node({
+    mode: "standalone",
+  }),
 });

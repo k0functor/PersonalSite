@@ -11,6 +11,16 @@ if (redirect) {
 
 const defaultType = Astro.url.searchParams.get("type") ?? "math-ium";
 const today = new Date().toISOString().slice(0, 10);
+
+const defaultBody = `# New note
+
+Write your content here.
+
+Math instructions:
+- Write formulas only inside the MDX content that this form creates.
+- Use dollar delimiters for inline and display formulas.
+- Do not use parenthesis or square-bracket LaTeX delimiters in MDX.
+`;
 ---
 
 <html lang="en">
@@ -26,7 +36,7 @@ const today = new Date().toISOString().slice(0, 10);
         <p class="logo">&lt;(.____.)&gt;</p>
         <h1>New content</h1>
         <p class="muted">
-          This form creates an MDX file and commits it to GitHub. Naturally, the humble text box has become infrastructure.
+          This form creates an MDX file and commits it to GitHub. The admin page itself does not contain LaTeX formulas anymore, because apparently JSX sees braces and immediately chooses violence.
         </p>
       </header>
 
@@ -155,20 +165,13 @@ const today = new Date().toISOString().slice(0, 10);
         <section class="card">
           <h2>Body</h2>
 
+          <p class="hint">
+            Put LaTeX only inside this textarea. The generated MDX file will handle it through the Markdown math pipeline. Use dollar delimiters for formulas. Avoid parenthesis and square-bracket LaTeX delimiters in MDX.
+          </p>
+
           <label>
             MDX content
-            <textarea name="body" rows="22"># New note
-
-Write your content here.
-
-Inline math: $a^2 + b^2 = c^2$
-
-Display math:
-
-$$
-\pi_1(S^1) \cong \mathbb{Z}
-$$
-</textarea>
+            <textarea name="body" rows="22">{defaultBody}</textarea>
           </label>
         </section>
 
@@ -213,6 +216,14 @@ $$
       }
 
       .muted {
+        color: var(--muted);
+      }
+
+      .hint {
+        padding: 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: white;
         color: var(--muted);
       }
 

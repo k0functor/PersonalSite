@@ -21,10 +21,17 @@ const { title, description, href } = Astro.props;
     border-radius: var(--radius);
     background: var(--color-card);
     text-decoration: none;
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease;
   }
 
   .card:hover {
     border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
   }
 
   .card h3 {

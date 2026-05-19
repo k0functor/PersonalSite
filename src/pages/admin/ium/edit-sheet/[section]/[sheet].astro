@@ -1,0 +1,107 @@
+---
+export const prerender = false;
+
+import { requireAdmin } from "../../../../../lib/admin/auth";
+import { getSheet, getSortedIumSections } from "../../../../../lib/ium/catalog";
+import { statusLabels } from "../../../../../lib/ium/types";
+
+const redirect = await requireAdmin(Astro.cookies);
+if (redirect) return redirect;
+
+const { section: sectionId, sheet: sheetId } = Astro.params;
+const sheet = sectionId && sheetId ? getSheet(sectionId, sheetId) : undefined;
+const sections = getSortedIumSections();
+const error = Astro.url.searchParams.get("error");
+
+if (!sheet) {
+  return Astro.redirect("/admin/ium/edit-sheet/");
+}
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Редактировать {sheet.title} — &lt;(.____.)&gt;</title>
+  </head>
+
+  <body>
+    <main>
+      <p><a href="/admin/ium/edit-sheet/">← Все листочки</a></p>
+
+      <h1>Редактировать листочек</h1>
+
+      {error && <p class="error">Ошибка: {error}</p>}
+
+      <form method="post" action="/api/admin/ium/update-sheet" enctype="multipart/form-data">
+        <input type="hidden" name="sectionId" value={sheet.sectionId} />
+        <input type="hidden" name="id" value={sheet.id} />
+
+        <label>
+          Раздел
+          <select disabled>
+            {sections.map((section) => (
+              <option value={section.id} selected={section.id === sheet.sectionId}>{section.title}</option>
+            ))}
+          </select>
+          <small>Раздел и slug листочка пока не меняем, чтобы не ломать URL и PDF-пути.</small>
+        </label>
+
+        <label>
+          Название
+          <input name="title" required value={sheet.title} />
+        </label>
+
+        <label>
+          Описание
+          <textarea name="description" required rows="3">{sheet.description}</textarea>
+        </label>
+
+        <label>
+          Темы через запятую
+          <input name="topics" value={sheet.topics.join(", ")} />
+        </label>
+
+        <label>
+          Статус
+          <select name="status" required>
+            {Object.entries(statusLabels).map(([value, label]) => (
+              <option value={value} selected={value === sheet.status}>{label}</option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Дата
+          <input name="date" type="date" required value={sheet.date} />
+        </label>
+
+        <label>
+          Заменить PDF условия
+          <input name="sheetPdf" type="file" accept="application/pdf,.pdf" />
+          <small>Оставь пустым, если не нужно заменять файл.</small>
+        </label>
+
+        <label>
+          Заменить PDF решения
+          <input name="solutionPdf" type="file" accept="application/pdf,.pdf" />
+          <small>Оставь пустым, если не нужно заменять файл.</small>
+        </label>
+
+        <button type="submit">Сохранить изменения</button>
+      </form>
+    </main>
+
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #f7f4ed; color: #181612; }
+      main { width: min(100% - 2rem, 760px); margin: 3rem auto; }
+      form { display: grid; gap: 1rem; }
+      label { display: grid; gap: 0.35rem; }
+      input, textarea, button, select { font: inherit; }
+      input, textarea, select { padding: 0.7rem; border: 1px solid #cfc3b0; border-radius: 8px; background: #fffaf0; }
+      button { width: fit-content; padding: 0.7rem 1rem; border: 1px solid #cfc3b0; border-radius: 4px; background: #ebe1d0; cursor: pointer; }
+      small, .error { color: #6f6a5f; }
+      .error { padding: 0.75rem; border: 1px solid #8a3a1b; border-radius: 8px; color: #8a3a1b; background: #fff4ea; }
+    </style>
+  </body>
+</html>

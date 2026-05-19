@@ -16,6 +16,7 @@
     "@astrojs/mdx": "^5.0.6",
     "@astrojs/node": "^10.1.1",
     "astro": "^6.3.4",
+    "katex": "^0.16.47",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
   }

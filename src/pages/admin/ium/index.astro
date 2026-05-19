@@ -1,0 +1,81 @@
+---
+export const prerender = false;
+
+import { requireAdmin } from "../../../lib/admin/auth";
+
+const redirect = await requireAdmin(Astro.cookies);
+if (redirect) return redirect;
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>НМУ Admin — &lt;(.____.)&gt;</title>
+  </head>
+
+  <body>
+    <main>
+      <p><a href="/admin/">← Admin</a></p>
+
+      <h1>НМУ</h1>
+      <p>Управление разделами, листочками и PDF-файлами.</p>
+
+      <nav class="grid">
+        <a href="/admin/ium/new-section/">
+          <strong>Добавить раздел</strong>
+          <span>Матанализ 1, Алгебра 1, Геометрия, Топология 2...</span>
+        </a>
+
+        <a href="/admin/ium/new-sheet/">
+          <strong>Добавить листочек</strong>
+          <span>Метаданные, PDF условия и PDF решения.</span>
+        </a>
+
+        <a href="/admin/ium/edit-sheet/">
+          <strong>Редактировать листочек</strong>
+          <span>Изменить статус, описание, темы или заменить PDF.</span>
+        </a>
+      </nav>
+    </main>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #f7f4ed;
+        color: #181612;
+      }
+
+      main {
+        width: min(100% - 2rem, 920px);
+        margin: 3rem auto;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .grid a {
+        display: grid;
+        gap: 0.5rem;
+        padding: 1rem;
+        border: 1px solid #cfc3b0;
+        border-radius: 12px;
+        background: #fffaf0;
+        text-decoration: none;
+      }
+
+      span {
+        color: #6f6a5f;
+      }
+    </style>
+  </body>
+</html>

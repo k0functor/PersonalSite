@@ -1,0 +1,86 @@
+---
+import type { IumSheet } from "../../lib/ium/types";
+import StatusBadge from "./StatusBadge.astro";
+
+interface Props {
+  sheet: IumSheet;
+}
+
+const { sheet } = Astro.props;
+---
+
+<a class="sheet-card" href={`/ru/math/ium/${sheet.sectionId}/${sheet.id}/`}>
+  <div class="top">
+    <h3>{sheet.title}</h3>
+    <StatusBadge status={sheet.status} />
+  </div>
+
+  <p>{sheet.description}</p>
+
+  {sheet.topics.length > 0 && (
+    <ul class="topics" aria-label="Темы">
+      {sheet.topics.map((topic) => <li>{topic}</li>)}
+    </ul>
+  )}
+
+  <p class="date">Обновлено: {new Date(sheet.updatedAt).toLocaleDateString("ru-RU")}</p>
+</a>
+
+<style>
+  .sheet-card {
+    display: block;
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-card);
+    text-decoration: none;
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .sheet-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  p {
+    color: var(--color-muted);
+  }
+
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0;
+    margin: var(--space-md) 0 0;
+    list-style: none;
+  }
+
+  .topics li {
+    padding: 0.2rem 0.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-muted);
+    font-size: 0.85rem;
+  }
+
+  .date {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+</style>

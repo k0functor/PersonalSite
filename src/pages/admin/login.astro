@@ -2,6 +2,7 @@
 export const prerender = false;
 
 const title = "Admin Login — <(.____.)>";
+const error = Astro.url.searchParams.get("error");
 ---
 
 <html lang="en">
@@ -17,6 +18,14 @@ const title = "Admin Login — <(.____.)>";
         <p class="logo">&lt;(.____.)&gt;</p>
         <h1>Admin login</h1>
         <p class="muted">Private content editor. The glamorous world of typing text into boxes.</p>
+
+        {error === "invalid-password" && (
+          <p class="error">Invalid password. Check ADMIN_PASSWORD in your .env file.</p>
+        )}
+
+        {error === "server-error" && (
+          <p class="error">Server error. Check the terminal where npm run dev is running.</p>
+        )}
 
         <form method="post" action="/api/admin/login">
           <label>
@@ -76,6 +85,14 @@ const title = "Admin Login — <(.____.)>";
         color: var(--muted);
       }
 
+      .error {
+        padding: 0.75rem;
+        border: 1px solid #b00020;
+        border-radius: 10px;
+        color: #b00020;
+        background: #fff0f2;
+      }
+
       form {
         display: grid;
         gap: 1rem;
@@ -96,7 +113,6 @@ const title = "Admin Login — <(.____.)>";
         padding: 0.75rem;
         border: 1px solid var(--border);
         border-radius: 10px;
-        background: white;
       }
 
       button {

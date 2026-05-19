@@ -1,26 +1,25 @@
 ---
+import type { IumSection } from "../../lib/ium/types";
+
 interface Props {
-  title: string;
-  description: string;
-  status: "active" | "planned" | "paused" | "archived";
-  href?: string;
+  section: IumSection;
+  count: number;
 }
 
-const { title, description, status, href } = Astro.props;
-const Tag = href ? "a" : "div";
+const { section, count } = Astro.props;
 ---
 
-<Tag class="project-card" href={href}>
+<a class="section-card" href={`/ru/math/ium/${section.id}/`}>
   <div class="top">
-    <h3>{title}</h3>
-    <span>{status}</span>
+    <h3>{section.title}</h3>
+    <span>{count} лист.</span>
   </div>
 
-  <p>{description}</p>
-</Tag>
+  <p>{section.description}</p>
+</a>
 
 <style>
-  .project-card {
+  .section-card {
     display: block;
     padding: var(--space-lg);
     border: 1px solid var(--color-border);
@@ -34,7 +33,7 @@ const Tag = href ? "a" : "div";
       background-color 180ms ease;
   }
 
-  .project-card:hover {
+  .section-card:hover {
     border-color: var(--color-accent);
     transform: translateY(-3px);
     box-shadow: var(--shadow-soft);
@@ -53,9 +52,8 @@ const Tag = href ? "a" : "div";
 
   span {
     color: var(--color-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
 
   p {

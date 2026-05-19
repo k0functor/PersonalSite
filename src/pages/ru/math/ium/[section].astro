@@ -1,0 +1,61 @@
+---
+import BaseLayout from "../../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../../components/PageHeader.astro";
+import IumSheetCard from "../../../../components/ium/IumSheetCard.astro";
+import {
+  getSectionById,
+  getSheetsBySection,
+  getSortedIumSections,
+} from "../../../../lib/ium/catalog";
+
+export function getStaticPaths() {
+  return getSortedIumSections().map((section) => ({
+    params: { section: section.id },
+  }));
+}
+
+const { section: sectionId } = Astro.params;
+const section = sectionId ? getSectionById(sectionId) : undefined;
+
+if (!section) {
+  return Astro.redirect("/ru/math/ium/");
+}
+
+const sheets = getSheetsBySection(section.id);
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`${section.title} — НМУ — ${logo}`}
+  description={section.description}
+  lang="ru"
+>
+  <PageHeader title={section.title} description={section.description} />
+
+  <p><a href="/ru/math/ium/">← Все разделы НМУ</a></p>
+
+  {sheets.length > 0 ? (
+    <section class="grid">
+      {sheets.map((sheet) => <IumSheetCard sheet={sheet} />)}
+    </section>
+  ) : (
+    <p class="empty">В этом разделе пока нет листочков.</p>
+  )}
+
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .empty {
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
+      color: var(--color-muted);
+    }
+  </style>
+</BaseLayout>

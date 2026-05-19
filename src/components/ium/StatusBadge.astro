@@ -1,0 +1,49 @@
+---
+type Status =
+  | "not-started"
+  | "in-progress"
+  | "partly-solved"
+  | "solved"
+  | "submitted"
+  | "needs-rewrite";
+
+interface Props {
+  status: Status;
+}
+
+const { status } = Astro.props;
+
+const labels: Record<Status, string> = {
+  "not-started": "не начат",
+  "in-progress": "в процессе",
+  "partly-solved": "решён частично",
+  solved: "решён",
+  submitted: "сдан",
+  "needs-rewrite": "нужно переписать",
+};
+
+const label = labels[status];
+---
+
+<span class={`status status-${status}`}>
+  {label}
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-card);
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .status-solved,
+  .status-submitted {
+    color: var(--color-accent);
+  }
+</style>

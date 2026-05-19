@@ -1,0 +1,154 @@
+---
+import BaseLayout from "../../../../../layouts/BaseLayout.astro";
+import PageHeader from "../../../../../components/PageHeader.astro";
+import PdfPreview from "../../../../../components/ium/PdfPreview.astro";
+import StatusBadge from "../../../../../components/ium/StatusBadge.astro";
+import {
+  getSectionById,
+  getSheet,
+  getSheetsBySection,
+  getSortedIumSections,
+} from "../../../../../lib/ium/catalog";
+
+export function getStaticPaths() {
+  const paths = [];
+
+  for (const section of getSortedIumSections()) {
+    const sheets = getSheetsBySection(section.id);
+
+    for (const sheet of sheets) {
+      paths.push({
+        params: {
+          section: section.id,
+          sheet: sheet.id,
+        },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { section: sectionId, sheet: sheetId } = Astro.params;
+
+const section =
+  typeof sectionId === "string" ? getSectionById(sectionId) : undefined;
+
+const sheet =
+  typeof sectionId === "string" && typeof sheetId === "string"
+    ? getSheet(sectionId, sheetId)
+    : undefined;
+
+if (!section || !sheet) {
+  return Astro.redirect("/ru/math/ium/");
+}
+
+const logo = "<(.____.)>";
+---
+
+<BaseLayout
+  title={`${sheet.title} — ${section.title} — ${logo}`}
+  description={sheet.description}
+  lang="ru"
+>
+  <p>
+    <a href={`/ru/math/ium/${section.id}/`}>← {section.title}</a>
+  </p>
+
+  <PageHeader title={sheet.title} description={sheet.description} />
+
+  <section class="meta">
+    <div>
+      <dt>Раздел</dt>
+      <dd>{section.title}</dd>
+    </div>
+
+    <div>
+      <dt>Статус</dt>
+      <dd>
+        <StatusBadge status={sheet.status} />
+      </dd>
+    </div>
+
+    <div>
+      <dt>Дата</dt>
+      <dd>{new Date(sheet.date).toLocaleDateString("ru-RU")}</dd>
+    </div>
+
+    <div>
+      <dt>Обновлено</dt>
+      <dd>{new Date(sheet.updatedAt).toLocaleDateString("ru-RU")}</dd>
+    </div>
+  </section>
+
+  {
+    sheet.topics.length > 0 && (
+      <section class="topics-block">
+        <h2>Темы</h2>
+
+        <ul class="topics">
+          {sheet.topics.map((topic) => (
+            <li>{topic}</li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <PdfPreview
+    title="Условие"
+    src={sheet.sheetPdf}
+    downloadLabel="Скачать условие"
+    emptyLabel="PDF условия пока не добавлен."
+  />
+
+  <PdfPreview
+    title="Решение"
+    src={sheet.solutionPdf}
+    downloadLabel="Скачать решение"
+    emptyLabel="PDF решения пока не добавлен."
+  />
+
+  <style>
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: var(--space-md);
+      margin: var(--space-lg) 0 var(--space-xl);
+      padding: var(--space-lg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      background: var(--color-card);
+    }
+
+    dt {
+      color: var(--color-muted);
+      font-size: 0.9rem;
+    }
+
+    dd {
+      margin: 0.2rem 0 0;
+      font-weight: 600;
+    }
+
+    .topics-block {
+      margin-top: var(--space-xl);
+    }
+
+    .topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .topics li {
+      padding: 0.25rem 0.45rem;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      background: var(--color-card);
+      color: var(--color-muted);
+    }
+  </style>
+</BaseLayout>

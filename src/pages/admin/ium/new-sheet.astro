@@ -1,0 +1,101 @@
+---
+export const prerender = false;
+
+import { requireAdmin } from "../../../lib/admin/auth";
+import { getSortedIumSections } from "../../../lib/ium/catalog";
+
+const redirect = await requireAdmin(Astro.cookies);
+if (redirect) return redirect;
+
+const sections = getSortedIumSections();
+const error = Astro.url.searchParams.get("error");
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Добавить листочек НМУ — &lt;(.____.)&gt;</title>
+  </head>
+
+  <body>
+    <main>
+      <p><a href="/admin/ium/">← НМУ Admin</a></p>
+
+      <h1>Добавить листочек НМУ</h1>
+
+      {error && <p class="error">Ошибка: {error}</p>}
+
+      <form method="post" action="/api/admin/ium/create-sheet" enctype="multipart/form-data">
+        <label>
+          Раздел
+          <select name="sectionId" required>
+            {sections.map((section) => <option value={section.id}>{section.title}</option>)}
+          </select>
+        </label>
+
+        <label>
+          Название
+          <input name="title" required placeholder="Листок 1" />
+        </label>
+
+        <label>
+          Slug / id
+          <input name="id" placeholder="sheet-01" />
+          <small>Лучше писать вроде sheet-01, sheet-02.</small>
+        </label>
+
+        <label>
+          Описание
+          <textarea name="description" required rows="3" placeholder="Первые задачи по пределам и непрерывности."></textarea>
+        </label>
+
+        <label>
+          Темы через запятую
+          <input name="topics" placeholder="пределы, непрерывность" />
+        </label>
+
+        <label>
+          Статус
+          <select name="status" required>
+            <option value="not-started">не начат</option>
+            <option value="in-progress" selected>в процессе</option>
+            <option value="partly-solved">решён частично</option>
+            <option value="solved">решён</option>
+            <option value="submitted">сдан</option>
+            <option value="needs-rewrite">нужно переписать</option>
+          </select>
+        </label>
+
+        <label>
+          Дата
+          <input name="date" type="date" required value={new Date().toISOString().slice(0, 10)} />
+        </label>
+
+        <label>
+          PDF условия
+          <input name="sheetPdf" type="file" accept="application/pdf,.pdf" required />
+        </label>
+
+        <label>
+          PDF решения
+          <input name="solutionPdf" type="file" accept="application/pdf,.pdf" />
+        </label>
+
+        <button type="submit">Добавить листочек</button>
+      </form>
+    </main>
+
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #f7f4ed; color: #181612; }
+      main { width: min(100% - 2rem, 760px); margin: 3rem auto; }
+      form { display: grid; gap: 1rem; }
+      label { display: grid; gap: 0.35rem; }
+      input, textarea, button, select { font: inherit; }
+      input, textarea, select { padding: 0.7rem; border: 1px solid #cfc3b0; border-radius: 8px; background: #fffaf0; }
+      button { width: fit-content; padding: 0.7rem 1rem; border: 1px solid #cfc3b0; border-radius: 4px; background: #ebe1d0; cursor: pointer; }
+      small, .error { color: #6f6a5f; }
+      .error { padding: 0.75rem; border: 1px solid #8a3a1b; border-radius: 8px; color: #8a3a1b; background: #fff4ea; }
+    </style>
+  </body>
+</html>

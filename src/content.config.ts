@@ -2,36 +2,6 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 
-const lang = z.enum(["ru", "en"]);
-
-const mathIum = defineCollection({
-  loader: glob({
-    base: "./src/content/math-ium",
-    pattern: "**/*.{md,mdx}",
-  }),
-
-  schema: z.object({
-    title: z.string(),
-    description: z.string(),
-    lang,
-    slug: z.string().optional(),
-    course: z.string(),
-    sheetNumber: z.number(),
-    status: z.enum([
-      "not-started",
-      "in-progress",
-      "partly-solved",
-      "solved",
-      "submitted",
-      "needs-rewrite",
-    ]),
-    solved: z.number(),
-    total: z.number(),
-    date: z.coerce.date(),
-    tags: z.array(z.string()).default([]),
-  }),
-});
-
 const mathNotes = defineCollection({
   loader: glob({
     base: "./src/content/math-notes",
@@ -41,8 +11,7 @@ const mathNotes = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    lang,
-    slug: z.string().optional(),
+    lang: z.enum(["ru", "en"]),
     topic: z.string(),
     level: z.enum(["basic", "intermediate", "advanced"]).default("basic"),
     date: z.coerce.date(),
@@ -59,12 +28,11 @@ const programming = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    lang,
-    slug: z.string().optional(),
-    topic: z.enum(["cpp", "stl", "algorithms", "cs", "tools", "projects"]),
-    level: z.enum(["basic", "intermediate", "advanced"]).default("basic"),
+    lang: z.enum(["ru", "en"]),
+    category: z.enum(["cpp", "stl", "algorithms", "cs", "tools", "project"]),
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -77,11 +45,10 @@ const gameDevlog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    lang,
-    slug: z.string().optional(),
+    lang: z.enum(["ru", "en"]),
     date: z.coerce.date(),
-    version: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -94,8 +61,7 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    lang,
-    slug: z.string().optional(),
+    lang: z.enum(["ru", "en"]),
     date: z.coerce.date(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
@@ -103,7 +69,6 @@ const blog = defineCollection({
 });
 
 export const collections = {
-  "math-ium": mathIum,
   "math-notes": mathNotes,
   programming,
   "game-devlog": gameDevlog,

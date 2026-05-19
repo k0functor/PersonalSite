@@ -41,11 +41,22 @@ export function getLocalizedPath(lang: Lang, path = "") {
 }
 
 export function getLanguageSwitchPath(pathname: string, targetLang: Lang) {
-  const switchedPath = pathname.replace(/^\/(ru|en)(?=\/|$)/, `/${targetLang}`);
+  const normalizedPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
 
-  if (switchedPath === pathname) {
+  const isIumPath = /^\/(ru|en)\/math\/ium(\/|$)/.test(normalizedPath);
+
+  if (isIumPath) {
+    return `/${targetLang}/math/ium/`;
+  }
+
+  const switchedPath = normalizedPath.replace(
+    /^\/(ru|en)(?=\/|$)/,
+    `/${targetLang}`
+  );
+
+  if (switchedPath === normalizedPath) {
     return `/${targetLang}/`;
   }
 
-  return switchedPath.endsWith("/") ? switchedPath : `${switchedPath}/`;
+  return switchedPath;
 }

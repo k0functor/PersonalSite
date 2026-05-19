@@ -2,9 +2,15 @@
   --color-bg: #f7f4ed;
   --color-text: #181612;
   --color-muted: #6f6a5f;
-  --color-border: #d8d0c2;
+  --color-border: #cfc3b0;
   --color-card: #fffaf0;
   --color-accent: #2f5d50;
+
+  --color-header: #ebe1d0;
+  --color-header-hover: #dfd2bd;
+  --color-footer: #e7dcc8;
+
+  --shadow-soft: 0 8px 24px rgba(24, 22, 18, 0.08);
 
   --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
@@ -22,6 +28,7 @@
 }
 
 html {
+  min-height: 100%;
   font-family: var(--font-main);
   background: var(--color-bg);
   color: var(--color-text);
@@ -31,6 +38,9 @@ body {
   margin: 0;
   min-height: 100vh;
   line-height: 1.6;
+
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -44,6 +54,7 @@ a:hover {
 }
 
 main {
+  flex: 1;
   padding: var(--space-lg) var(--space-md);
 }
 
@@ -71,4 +82,27 @@ ul {
 
 code {
   font-family: var(--font-mono);
+}
+
+a,
+button {
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.site-header,
+.site-footer {
+  flex-shrink: 0;
 }
