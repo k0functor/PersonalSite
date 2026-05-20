@@ -1,0 +1,87 @@
+---
+interface Props {
+  lang: "ru" | "en";
+}
+
+const { lang } = Astro.props;
+const label = lang === "ru" ? "Переключить тему" : "Toggle theme";
+---
+
+<button class="theme-toggle" type="button" aria-label={label} data-theme-toggle>
+  <svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0 4a1 1 0 0 1-1-1v-1.3a1 1 0 0 1 2 0V21a1 1 0 0 1-1 1Zm0-17.7a1 1 0 0 1-1-1V2a1 1 0 0 1 2 0v1.3a1 1 0 0 1-1 1ZM4.2 20.8a1 1 0 0 1-.7-1.7l.9-.9a1 1 0 0 1 1.4 1.4l-.9.9a1 1 0 0 1-.7.3Zm14.7-14.7a1 1 0 0 1-.7-1.7l.9-.9a1 1 0 0 1 1.4 1.4l-.9.9a1 1 0 0 1-.7.3ZM2 13a1 1 0 0 1 0-2h1.3a1 1 0 0 1 0 2H2Zm18.7 0a1 1 0 0 1 0-2H22a1 1 0 0 1 0 2h-1.3ZM4.4 5.8l-.9-.9a1 1 0 0 1 1.4-1.4l.9.9a1 1 0 0 1-1.4 1.4Zm14.7 14.7-.9-.9a1 1 0 0 1 1.4-1.4l.9.9a1 1 0 0 1-1.4 1.4Z" />
+  </svg>
+
+  <svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M21 14.6A8.7 8.7 0 0 1 9.4 3a1 1 0 0 0-1.2-1.2A10.7 10.7 0 1 0 22.2 15.8a1 1 0 0 0-1.2-1.2Z" />
+  </svg>
+</button>
+
+<script is:inline>
+  function setThemeToggleIcon() {
+    const theme = document.documentElement.dataset.theme || "light";
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      button.setAttribute("data-current-theme", theme);
+    });
+  }
+
+  setThemeToggleIcon();
+
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-theme-toggle]");
+    if (!button) return;
+
+    const current = document.documentElement.dataset.theme || "light";
+    const next = current === "dark" ? "light" : "dark";
+
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("theme", next);
+    setThemeToggleIcon();
+  });
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    min-height: 2rem;
+    padding: 0.35rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--theme-toggle-icon);
+    cursor: pointer;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease;
+  }
+
+  .theme-toggle:hover {
+    background: var(--color-header-hover);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(2px);
+  }
+
+  .theme-toggle svg {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+
+  .theme-toggle .moon {
+    display: none;
+  }
+
+  .theme-toggle[data-current-theme="dark"] .sun {
+    display: none;
+  }
+
+  .theme-toggle[data-current-theme="dark"] .moon {
+    display: block;
+  }
+</style>

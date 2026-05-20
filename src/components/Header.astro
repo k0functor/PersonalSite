@@ -6,6 +6,7 @@ import {
   type Lang,
 } from "../config/navigation";
 import { getDictionary } from "../i18n";
+import ThemeToggle from "./ThemeToggle.astro";
 
 interface Props {
   lang: Lang;
@@ -16,7 +17,6 @@ const t = getDictionary(lang);
 
 const otherLang = lang === "ru" ? "en" : "ru";
 const otherLangLabel = lang === "ru" ? "EN" : "RU";
-
 const switchHref = getLanguageSwitchPath(Astro.url.pathname, otherLang);
 ---
 
@@ -33,6 +33,8 @@ const switchHref = getLanguageSwitchPath(Astro.url.pathname, otherLang);
         </a>
       ))}
 
+      <ThemeToggle lang={lang} />
+
       <a class="lang" href={switchHref}>
         {otherLangLabel}
       </a>
@@ -43,6 +45,7 @@ const switchHref = getLanguageSwitchPath(Astro.url.pathname, otherLang);
 <style>
   .site-header {
     padding: 0;
+    flex-shrink: 0;
   }
 
   .inner {
@@ -86,6 +89,7 @@ const switchHref = getLanguageSwitchPath(Astro.url.pathname, otherLang);
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: center;
     gap: 0.4rem;
     font-size: 0.95rem;
   }

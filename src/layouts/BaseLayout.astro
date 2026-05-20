@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import "../styles/theme.css";
 import "katex/dist/katex.min.css";
 
 import Header from "../components/Header.astro";
@@ -25,8 +26,16 @@ const {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
     <title>{title}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <script is:inline>
+      const savedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = savedTheme || (prefersDark ? "dark" : "light");
+      document.documentElement.dataset.theme = theme;
+    </script>
   </head>
 
   <body>
