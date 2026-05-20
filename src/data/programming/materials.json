@@ -1,1 +1,43 @@
-[]
+[
+  {
+    "id": "ru-data-structures-dynamic-array",
+    "lang": "ru",
+    "sectionId": "data-structures",
+    "slug": "dynamic-array",
+    "title": "Динамический массив",
+    "description": "Самый обычный динамический массив, написанный в учебных целях.",
+    "topics": [
+      "массив",
+      "динамический массив",
+      "C++"
+    ],
+    "order": 1,
+    "blocks": [
+      {
+        "type": "text",
+        "title": "Динамический массив",
+        "content": "Динамический массив — это структура данных, которая хранит элементы одного типа в непрерывной области памяти и позволяет обращаться к ним по индексу за O(1). В отличие от обычного массива фиксированного размера, динамический массив может увеличивать свою вместимость во время работы программы.\r\n\r\nВнутри динамический массив обычно хранит три основных значения:"
+      },
+      {
+        "type": "code",
+        "title": "Основные значения",
+        "language": "cpp",
+        "code": "T* data;              // указатель на блок памяти с элементами\r\nstd::size_t size;     // текущее количество элементов\r\nstd::size_t capacity; // количество элементов, которое можно хранить без нового выделения памяти"
+      },
+      {
+        "type": "text",
+        "title": "Свойства динамического массива",
+        "content": "Когда в массив добавляется новый элемент, он помещается в конец. Если свободного места больше нет, массив выделяет новый блок памяти большего размера, переносит туда старые элементы, освобождает старую память и добавляет новый элемент.\r\n\r\nБлагодаря этому добавление элемента в конец работает амортизированно за O(1), хотя отдельная операция добавления иногда может занимать O(n) из-за перевыделения памяти и переноса элементов.\r\n\r\nОсновные свойства динамического массива:\r\n\r\n- Доступ по индексу: O(1)\r\n- Добавление в конец: амортизированно O(1)\r\n- Удаление с конца: O(1)\r\n- Вставка или удаление в середине: O(n)\r\n- Поиск элемента: O(n)\r\n\r\nГлавные преимущества динамического массива — быстрый доступ по индексу, компактное хранение элементов и хорошая работа с кэшем процессора, потому что элементы лежат подряд в памяти. Главный недостаток — дорогие вставки и удаления в середине, поскольку после них часто нужно сдвигать элементы."
+      },
+      {
+        "type": "code",
+        "title": "Реализация",
+        "language": "cpp",
+        "code": "/*  \r\nЭта реализация учебная. Она использует new T[capacity_], поэтому тип T должен иметь конструктор по умолчанию. \r\nНастоящий std::vector устроен сложнее: он выделяет сырую память и отдельно конструирует только реально добавленные элементы.\r\n*/\r\n\r\n#pragma once\r\n\r\n#include <cstddef>\r\n#include <stdexcept>\r\n#include <utility>\r\n\r\ntemplate <typename T>\r\nclass DynamicArray {\r\npublic:\r\n    DynamicArray() : capacity_(8), size_(0), data_(new T[capacity_]) {}\r\n\r\n    explicit DynamicArray(std::size_t aCapacity) : capacity_(aCapacity), size_(0), data_(new T[capacity_]) {}\r\n\r\n    DynamicArray(const DynamicArray& other) : capacity_(other.capacity_), size_(other.size_), data_(new T[other.capacity_]) {\r\n        for (std::size_t i = 0; i < size_; ++i) {\r\n            data_[i] = other.data_[i];\r\n        }\r\n    }\r\n\r\n    DynamicArray(DynamicArray&& other) noexcept : capacity_(other.capacity_), size_(other.size_), data_(other.data_) {\r\n        other.data_ = nullptr;\r\n        other.capacity_ = 0;\r\n        other.size_ = 0;\r\n    }\r\n\r\n    ~DynamicArray() {\r\n        delete[] data_;\r\n    }\r\n\r\n    std::size_t size() const { return size_; }\r\n\r\n    std::size_t capacity() const { return capacity_; }\r\n\r\n    T* data() { return data_; }\r\n\r\n    const T* data() const { return data_; }\r\n\r\n    T* begin() { return data_; }\r\n\r\n    const T* begin() const { return data_; }\r\n\r\n    const T* cbegin() const { return data_; }\r\n\r\n    T* end() { return data_ + size_; }\r\n\r\n    const T* end() const { return data_ + size_; }\r\n\r\n    const T* cend() const { return data_ + size_; }\r\n\r\n    bool empty() const { return size_ == 0; }\r\n\r\n    void reserve(std::size_t newCapacity) {\r\n        if (newCapacity <= capacity_) return;\r\n\r\n        T* newData = new T[newCapacity];\r\n\r\n        for (std::size_t i = 0; i < size_; ++i) {\r\n            newData[i] = std::move(data_[i]);\r\n        }\r\n\r\n        delete[] data_;\r\n\r\n        data_ = newData;\r\n        capacity_ = newCapacity;\r\n    }\r\n\r\n    void clear() { size_ = 0; }\r\n\r\n    T& at(std::size_t index) {\r\n        if (index >= size_) {\r\n            throw std::out_of_range(\"Index out of range\");\r\n        }\r\n        return data_[index];\r\n    }\r\n\r\n    const T& at(std::size_t index) const {\r\n        if (index >= size_) {\r\n            throw std::out_of_range(\"Index out of range\");\r\n        }\r\n        return data_[index];\r\n    }\r\n\r\n    void pushBack(const T& element) {\r\n        if (size_ >= capacity_) {\r\n            reallocate();\r\n        }\r\n        data_[size_++] = element;\r\n    }\r\n\r\n    void pushBack(T&& element) {\r\n        if (size_ >= capacity_) {\r\n            reallocate();\r\n        }\r\n        data_[size_++] = std::move(element);\r\n    }\r\n\r\n    void popBack() {\r\n        if (empty()) {\r\n            throw std::out_of_range(\"DynamicArray is empty\");\r\n        }\r\n        --size_;\r\n    }\r\n\r\n    T& front() {\r\n        if (empty()) {\r\n            throw std::out_of_range(\"DynamicArray is empty\");\r\n        }\r\n        return data_[0];\r\n    }\r\n\r\n    const T& front() const {\r\n        if (empty()) {\r\n            throw std::out_of_range(\"DynamicArray is empty\");\r\n        }\r\n        return data_[0];\r\n    }\r\n\r\n    T& back() {\r\n        if (empty()) {\r\n            throw std::out_of_range(\"DynamicArray is empty\");\r\n        }\r\n        return data_[size_ - 1];\r\n    }\r\n\r\n    const T& back() const {\r\n        if (empty()) {\r\n            throw std::out_of_range(\"DynamicArray is empty\");\r\n        }\r\n        return data_[size_ - 1];\r\n    }\r\n\r\n    void erase(std::size_t index) {\r\n        if (index >= size_) {\r\n            throw std::out_of_range(\"Index out of range\");\r\n        }\r\n        for (std::size_t i = index; i + 1 < size_; ++i) {\r\n            data_[i] = std::move(data_[i + 1]);\r\n        }\r\n        --size_;\r\n    }\r\n\r\n    T& operator[](std::size_t index) { return data_[index]; }\r\n\r\n    const T& operator[](std::size_t index) const { return data_[index]; }\r\n\r\n    DynamicArray& operator=(const DynamicArray& other) {\r\n        if (this == &other) return *this;\r\n\r\n        T* newData = new T[other.capacity_];\r\n\r\n        for (std::size_t i = 0; i < other.size_; ++i) {\r\n            newData[i] = other.data_[i];\r\n        }\r\n\r\n        delete[] data_;\r\n\r\n        data_ = newData;\r\n        capacity_ = other.capacity_;\r\n        size_ = other.size_;\r\n\r\n        return *this;\r\n    }\r\n\r\n    DynamicArray& operator=(DynamicArray&& other) noexcept {\r\n        if (this == &other) return *this;\r\n\r\n        delete[] data_;\r\n\r\n        capacity_ = other.capacity_;\r\n        size_ = other.size_;\r\n        data_ = other.data_;\r\n\r\n        other.data_ = nullptr;\r\n        other.capacity_ = 0;\r\n        other.size_ = 0;\r\n\r\n        return *this;\r\n    }\r\n\r\n    std::size_t find(const T& element) const {\r\n        for (std::size_t i = 0; i < size_; ++i) {\r\n            if (data_[i] == element) return i;\r\n        }\r\n\r\n        throw std::runtime_error(\"Element not found\");\r\n    }\r\n\r\n    bool contains(const T& element) const {\r\n        for (std::size_t i = 0; i < size_; ++i) {\r\n            if (data_[i] == element) return true;\r\n        }\r\n        return false;\r\n    }\r\n\r\n    bool operator==(const DynamicArray& other) const {\r\n        if (size_ != other.size_) return false;\r\n\r\n        for (std::size_t i = 0; i < size_; ++i) {\r\n            if (data_[i] != other.data_[i]) return false;\r\n        }\r\n\r\n        return true;\r\n    }\r\n\r\nprivate:\r\n    std::size_t capacity_;\r\n    std::size_t size_;\r\n    T* data_;\r\n\r\n    void reallocate() {\r\n        std::size_t newCapacity = capacity_ == 0 ? 1 : capacity_ * 2;\r\n        reserve(newCapacity);\r\n    }\r\n};"
+      }
+    ],
+    "tasks": [],
+    "createdAt": "2026-05-20",
+    "updatedAt": "2026-05-20"
+  }
+]
